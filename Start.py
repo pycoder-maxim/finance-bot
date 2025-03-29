@@ -1,7 +1,5 @@
-from turtledemo.penrose import start
-
 import telebot
-from telebot import types
+import info_data
 
 bot = telebot.TeleBot('7607516429:AAEpIr2Y0Xwd88iOCOLpVh1I6kC0cRgemLM')
 
@@ -16,8 +14,8 @@ def main(messege):
 
 @bot.message_handler(commands=['help'])
 def info(messege):
-    bot.send_message(messege.chat.id,
-                     'Что-бы добавить доход введите команду /add_income И внесите: <сумма> <категория> <комментарий>**')
+    bot.send_message(messege.chat.id, info_data._k_help_text_rus[0], parse_mode= 'Markdown')
+
 
 
 @bot.message_handler(commands=['add_income'])
