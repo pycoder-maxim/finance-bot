@@ -14,18 +14,16 @@ def main(messege):
 
 
 
-@bot.message_handler()
+@bot.message_handler(commands=['help'])
 def info(messege):
-    if messege.text.lower() == '/help':
-        bot.send_message(messege.chat.id,
-                         'Что-бы добавить доход введите команду /add_income И внесите: <сумма> <категория> <комментарий>**')
+    bot.send_message(messege.chat.id,
+                     'Что-бы добавить доход введите команду /add_income И внесите: <сумма> <категория> <комментарий>**')
 
 
-@bot.message_handler()
+@bot.message_handler(commands=['add_income'])
 def info(messege):
-    if messege.text.lower() == '/add_income':
-        bot.send_message(messege.chat.id,
-                         f'Введите ваш доход за месяц : {icome}')
+    bot.send_message(messege.chat.id,
+                     f'Введите ваш доход за месяц : {icome}')
 
 @bot.message_handler()
 def ic(messege):
