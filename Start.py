@@ -1,10 +1,6 @@
-from math import lgamma
-from turtledemo.penrose import start
-from xml.sax import parse
-
 import telebot
 
-from telebot import types
+import info_data
 
 
 
