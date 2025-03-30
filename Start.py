@@ -1,7 +1,7 @@
 import telebot
 
 import info_data
-
+from telebot import types
 
 
 
