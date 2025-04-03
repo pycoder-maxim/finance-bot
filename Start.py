@@ -1,5 +1,6 @@
 import telebot
 from telebot.apihelper import send_message
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 import info_data
 from telebot import types
@@ -10,13 +11,20 @@ bot = telebot.TeleBot('7607516429:AAEpIr2Y0Xwd88iOCOLpVh1I6kC0cRgemLM')
 
 #Переменные доходов
 icome = 0
-category = ''
-comment = ''
+
 #Переменные расходов
 expenditure = 0
-category_r = ''
-comment_r = ''
 
+
+
+#Переменные категорий дохода.
+b = '"Зарплата"'
+c = '"Подработка"'
+
+#Переменые Категорий расхода
+
+t = '"Спорт"'
+w = '"Развлечения"'
 
 
 
@@ -60,6 +68,64 @@ def bot_message(messege):
             bot.register_next_step_handler(messege, sum_r)
         elif messege.text == '3. Текущий баланс 💰':
             bot.register_next_step_handler(messege,ball)
+        elif messege.text == '4. Категории 🖼️':
+            bot.register_next_step_handler(messege,categ)
+
+'''Блок обработки категорий (КНОПКА 4)'''
+
+
+#Функция категорий
+def categ(messege):
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    change1 = types.InlineKeyboardButton('Категории доходов',callback_data='1')
+    change2 = types.InlineKeyboardButton('Категории расходов',callback_data='2')
+    markup.add(change1,change2)
+    bot.send_message(messege.chat.id, 'Выберите категорию : <b>1.Категории доходов</b>  /  <b>2.Категории расходов</b>', reply_markup=markup,parse_mode='html')
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def answer(call):
+    global icome
+    if call.data == '1':
+        markup_reply = types.InlineKeyboardMarkup(row_width=2)
+        icome1 = types.InlineKeyboardButton('Зарплата  💵',callback_data='I')
+        icome2 = types.InlineKeyboardButton('Подработка ⛏️',callback_data='II')
+        icome3 = types.InlineKeyboardButton('Добавить категорию ✅',callback_data='III')
+        icome4 = types.InlineKeyboardButton('Удалить категорию ❌',callback_data='IV')
+        markup_reply.add(icome1,icome2,icome3,icome4,)
+        bot.send_message(call.message.chat.id,'<b>Выберете категорию:</b> ',parse_mode='html',reply_markup=markup_reply)
+
+
+    elif call.data == '2':
+        markup_reply1 = types.InlineKeyboardMarkup(row_width=2)
+        icome5 = types.InlineKeyboardButton('Спорт 🏀',callback_data='V')
+        icome6 = types.InlineKeyboardButton('Развлечения 🎥',callback_data='VI')
+        icome7 = types.InlineKeyboardButton('ДДобавить категорию ✅',callback_data='VII')
+        icome8 = types.InlineKeyboardButton('Удалить категорию ❌',callback_data='VIII')
+        markup_reply1.add(icome5,icome6,icome7,icome8)
+        bot.send_message(call.message.chat.id, '<b>Выберете категорию:</b> ', parse_mode='html',
+                         reply_markup=markup_reply1)
+
+#Функционал кнопок Категорий(Зарплата, Подработка, Спорт, Развлечения)
+
+    elif call.data == 'I':
+        bot.send_message(call.message.chat.id, f'Доход <b>{icome} руб</b> по категории <b>{b}</b> добавлен',
+                         parse_mode='html')
+    elif call.data == 'II':
+        bot.send_message(call.message.chat.id, f'Доход <b>{icome} руб</b> по категории <b>{c}</b> добавлен',
+                         parse_mode='html')
+
+    elif call.data == 'V':
+        bot.send_message(call.message.chat.id, f'Расход <b>{expenditure} руб</b> по категории <b>{t}</b> добавлен',
+                         parse_mode='html')
+
+    elif call.data == 'VI':
+        bot.send_message(call.message.chat.id, f'Расход <b>{expenditure} руб</b> по категории <b>{w}</b> добавлен',
+                         parse_mode='html')
+
+
+
+
 
 """Блок обработки по балансу (КНОПКА 3). """
 
@@ -76,24 +142,12 @@ def ball(messege):
 
 
 # Функция ввести доход.
+
 def summa(messege):
     global icome
     icome = messege.text.strip()
-    bot.send_message(messege.chat.id, 'Введите категорию дохода:')
-    bot.register_next_step_handler(messege, cat)
-
-# Функция ввести категорию дохода.
-def cat(messege):
-    global category
-    category = messege.text.strip()
     bot.send_message(messege.chat.id, 'Введите комментарий:')
-    bot.register_next_step_handler(messege, com)
-
-# Функция ввести комментарий дохода.
-def com(messege):
-    global comment
-    comment = messege.text.strip()
-    bot.send_message(messege.chat.id, f'Доход <b>{icome} руб</b> по категории <b>{category}</b> добавлен', parse_mode='html')
+    bot.register_next_step_handler(messege, categ )
 
 
 """ Блок обработки по расходам (КНОПКА 2). """
@@ -103,23 +157,8 @@ def com(messege):
 def sum_r(messege):
     global expenditure
     expenditure = messege.text.strip()
-    bot.send_message(messege.chat.id, 'Введите категорию расхода:')
-    bot.register_next_step_handler(messege, cat_r)
-
-# Функция ввести категорию расхода.
-def cat_r(messege):
-    global category_r
-    category_r = messege.text.strip()
     bot.send_message(messege.chat.id, 'Введите комментарий:')
-    bot.register_next_step_handler(messege, com_r)
-
-# Функция ввести комментарий расхода.
-def com_r(messege):
-    global comment_r
-    comment_r = messege.text.strip()
-    bot.send_message(messege.chat.id, f'Расход <b>{expenditure} руб</b> по категории <b>{category_r}</b> добавлен',
-                     parse_mode='html')
-
+    bot.register_next_step_handler(messege, categ )
 
 
 bot.polling(none_stop=True, interval=0 )
