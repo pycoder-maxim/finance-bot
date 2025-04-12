@@ -37,7 +37,7 @@ def main(messege):
 def info(messege):
 
 # Меню бота (кнопки).
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=4)
+    markup = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
     command1 = types.InlineKeyboardButton('1. Добавить доход ♻️')
     command2 = types.InlineKeyboardButton('2. Добавить расходы 🪫')
     command3 = types.InlineKeyboardButton('3. Текущий баланс 💰')
