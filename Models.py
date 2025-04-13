@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship
 
 
 Base = declarative_base()
+
+
 class User(Base):
     __tablename__ = 'users'
 
@@ -15,7 +17,7 @@ class User(Base):
         return f"<User(id={self.id}, name='{self.name}')>"
 
 if __name__ == '__main__':
-    engine = create_engine("sqlite:////users.db", echo=True)
+    engine = create_engine("sqlite:///users.db", echo=True)
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     print("DATABASE CREATED SUCCESSFULLY\n")
