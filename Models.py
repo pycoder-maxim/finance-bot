@@ -17,21 +17,15 @@ class User(Base):
     def __repr__(self):
         return f"<User(id={self.id}, name='{self.name}')>"
 
-
-
-
-
 class Post(Base):
     __tablename__ = 'posts'
     id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     title = Column(String, nullable=False)
     user = relationship("User", back_populates="posts")
 
-
     def __repr__(self):
-        return f"<User(id={self.id}, name='{self.name}')>"
-
-
+        return f"<User(id={self.id}, post='{self.title}')>"
 
 
 if __name__ == '__main__':
