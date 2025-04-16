@@ -7,22 +7,22 @@ from sqlalchemy.orm import relationship
 Base = declarative_base()
 
 
-class Expenses(Base):
+class Expense(Base):
     __tablename__ = 'expenses'
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    comments = relationship("comments", back_populates="expenses")
+    comments = relationship("Comment", back_populates="expense")
 
     def __repr__(self):
         return f"<User(id={self.id}, name='{self.name}')>"
 
-class Comments(Base):
+class Comment(Base):
     __tablename__ = 'comments'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('expenses.id'), nullable=False)
     title = Column(String, nullable=False)
-    expenses= relationship("expenses", back_populates="comments")
+    expenses= relationship("Expense", back_populates="comments")
 
     def __repr__(self):
         return f"<User(id={self.id}, post='{self.title}')>"
