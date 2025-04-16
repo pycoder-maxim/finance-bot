@@ -7,25 +7,27 @@ from sqlalchemy.orm import relationship
 Base = declarative_base()
 
 
-class User(Base):
-    __tablename__ = 'users'
+class Expenses(Base):
+    __tablename__ = 'expenses'
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    posts = relationship("Post", back_populates="user")
+    comments = relationship("comments", back_populates="expenses")
 
     def __repr__(self):
         return f"<User(id={self.id}, name='{self.name}')>"
 
-class Post(Base):
-    __tablename__ = 'posts'
+class Comments(Base):
+    __tablename__ = 'comments'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     title = Column(String, nullable=False)
-    user = relationship("User", back_populates="posts")
+    expenses= relationship("expenses", back_populates="comments")
 
     def __repr__(self):
         return f"<User(id={self.id}, post='{self.title}')>"
+
+
 
 
 if __name__ == '__main__':
