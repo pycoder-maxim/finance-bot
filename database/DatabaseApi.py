@@ -1,10 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from UserHandler import UserHandler
+from DataBaseModel import db_path
+
 #from TransactionsHandler import TransactionHandler
 #from LinkHandler import LinkHandler
 #from CommissionHandler import CommissionHandler
-#from DatabaseModel import db_path
 #from WalletHandler import WalletHandler
 
 
@@ -18,12 +19,12 @@ class Singleton(type):
 
 class DatabaseApi(metaclass=Singleton):
     def __init__(self):
-        engine = create_engine(f"postgresql+psycopg2://{db_path}")
+        engine = create_engine(f"sqlite:///{db_path}")
         __sessionMaker__ = sessionmaker()
         __sessionMaker__.configure(bind=engine)
         self.__session__ = __sessionMaker__()
-        #self.__db_path__ = db_path
-        #self.__userHandle__ = UserHandler(self.__session__)
+        self.__db_path__ = db_path
+        self.__userHandle__ = UserHandler(self.__session__)
 
         #self.__transactionHandle__ = TransactionHandler(self.__session__)
         #self.__walletHandle__ = WalletHandler(self.__session__, self.__userHandle__)

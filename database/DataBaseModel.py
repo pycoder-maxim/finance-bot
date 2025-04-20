@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DECIMAL, BigInteger
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
+db_path = 'database/db/finans_bot_db.db'
 Base = declarative_base()
 
 class Users(Base):
@@ -108,7 +109,7 @@ class Transactions(Base):
 
 
 if __name__ == '__main__':
-    engine = create_engine("sqlite:///users.db", echo=True)
+    engine = create_engine(f"sqlite:///{db_path}")
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     print("DATABASE CREATED SUCCESSFULLY\n")
