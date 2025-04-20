@@ -6,7 +6,6 @@ import info_data
 from telebot import types
 
 
-
 bot = telebot.TeleBot('7607516429:AAEpIr2Y0Xwd88iOCOLpVh1I6kC0cRgemLM')
 
 #Переменные доходов

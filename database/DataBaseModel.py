@@ -3,9 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DECIMAL, BigInteger
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
-
 Base = declarative_base()
-
 
 class Users(Base):
     __tablename__ = 'users'
@@ -34,7 +32,9 @@ class Categories(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    ctype = Column(String)
+    ctype = Column(String) # сокрещение от category type
+    # возможные значения - "income" "expense" "savings" "goal"
+
     created_at = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
     users = relationship("Users",back_populates='categories')
@@ -57,25 +57,25 @@ class Walets(Base):
     created_at = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
     walets = relationship("Users", back_populates='walets')
-    def __init__(self,name:str,currency:str,created_at:str):
+    def __init__(self, user_id:int, name:str,currency:str,created_at:str):
         self.name = name
         self.currency = currency
         self.created_at = created_at
-
+        self.user_id = user_id
 
     def __repr__(self):
         info:str = f'ИМЯ, ВАЛЮТА:{self.name} {self.currency} {self.created_at}'
         return info
+    #
 
-
-class Repoprts(Base):
-    __tablename__ = 'repoprts'
+class Reports(Base):
+    __tablename__ = 'reports'
     id = Column(Integer, primary_key=True)
     name = Column(String)
     report_data = Column(String)
     created_at = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
-    walets = relationship("Users", back_populates='repoprts')
+    walets = relationship("Users", back_populates='reports')
     def __init__(self,name:str,report_data:str,created_at:str):
         self.name = name
         self.report_data = report_data
@@ -107,20 +107,9 @@ class Transactions(Base):
         return info
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == '__main__':
+    engine = create_engine("sqlite:///users.db", echo=True)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+    print("DATABASE CREATED SUCCESSFULLY\n")
+    print(__name__)

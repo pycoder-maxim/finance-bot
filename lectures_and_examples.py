@@ -1,9 +1,5 @@
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.dialects.oracle.dictionary import all_users
-from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.orm import declarative_base, sessionmaker
-from Models import *
+from sqlalchemy.orm import sessionmaker
+from database.DataBaseModel import *
 
 engine = create_engine("sqlite:///users.db", echo=True)
 Base = declarative_base()
