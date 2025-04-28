@@ -1,7 +1,7 @@
 from DataBaseModel import Transactions
 from sqlalchemy.orm import Session
 
-class TransactionsHendler:
+class TransactionsHandler:
     def __init__(self, session:Session):
         self.__session__ = session
 

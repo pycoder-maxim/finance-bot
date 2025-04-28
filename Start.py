@@ -1,20 +1,17 @@
 import telebot
-from telebot.apihelper import send_message
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
-
-import info_data
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from database import *
 from telebot import types
+from datetime import datetime
 
-
-bot = telebot.TeleBot('7607516429:AAEpIr2Y0Xwd88iOCOLpVh1I6kC0cRgemLM')
+db_api = DatabaseApi()
+bot = telebot.TeleBot('') #стер токен
 
 #Переменные доходов
 icome = 0
 
 #Переменные расходов
 expenditure = 0
-
-
 
 #Переменные категорий дохода.
 b = '"Зарплата"'
@@ -28,9 +25,10 @@ w = '"Развлечения"'
 
 
 @bot.message_handler(commands=['start'])
-def main(messege):
+def main(messege:Message):
     bot.send_message(messege.chat.id,'Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help' )
-
+    db_api.users().add_user(messege.from_user.id, messege.from_user.first_name, messege.from_user.last_name,
+                            messege.from_user.username, datetime.now().__str__())
 
 @bot.message_handler(commands=['help'])
 def info(messege):

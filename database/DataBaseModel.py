@@ -15,12 +15,15 @@ class Users(Base):
     user_name = Column(String)
     created_at = Column(String)
     categories = relationship("Categories", back_populates="users")
+    walets = relationship("Walets", back_populates="user")
+    reports = relationship("Reports", back_populates="user")
+    transactions = relationship("Transactions", back_populates="user")
 
     def __init__(self,telegramm_id:int,first_name:str,last_name:str,user_name:str,created_at:str):
         self.telegramm_id = telegramm_id
-        self.first_name = first_name[0]
-        self.last_name = last_name[1]
-        self.user_name = user_name[2]
+        self.first_name = first_name
+        self.last_name = last_name
+        self.user_name = user_name
         self.created_at = created_at
 
     def __repr__(self):
@@ -57,7 +60,7 @@ class Walets(Base):
     currency = Column(String)
     created_at = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
-    walets = relationship("Users", back_populates='walets')
+    user = relationship("Users", back_populates='walets')
     def __init__(self, user_id:int, name:str,currency:str,created_at:str):
         self.name = name
         self.currency = currency
@@ -76,7 +79,7 @@ class Reports(Base):
     report_data = Column(String)
     created_at = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
-    walets = relationship("Users", back_populates='reports')
+    user = relationship("Users", back_populates='reports')
     def __init__(self,name:str,report_data:str,created_at:str):
         self.name = name
         self.report_data = report_data
@@ -84,7 +87,7 @@ class Reports(Base):
 
 
     def __repr__(self):
-        info:str = f'ИМЯ, ПОВТОРНО ОБРАБОТАННЫЕ ДАННЫЕ:{self.name} {self.currency} {self.created_at}'
+        info:str = f'ИМЯ, ОТЧЕТНЫЕ ДАННЫЕ:{self.name} {self.report_data} {self.created_at}'
         return info
 
 
@@ -96,7 +99,7 @@ class Transactions(Base):
     report_data = Column(String)
     created_at = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
-    walets = relationship("Users", back_populates='transactions')
+    user = relationship("Users", back_populates='transactions')
     def __init__(self,name:str,report_data:str,created_at:str):
         self.name = name
         self.report_data = report_data
@@ -104,12 +107,12 @@ class Transactions(Base):
 
 
     def __repr__(self):
-        info:str = f'ИМЯ, ПОВТОРНО ОБРАБОТАННЫЕ ДАННЫЕ:{self.name} {self.currency} {self.created_at}'
+        info:str = f'ИМЯ, ТРАНЗАКЦИЯ:{self.name} {self.report_data} {self.created_at}'
         return info
 
 
 if __name__ == '__main__':
-    engine = create_engine(f"sqlite:///{db_path}")
+    engine = create_engine(f"sqlite:///db/finans_bot_db.db")
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     print("DATABASE CREATED SUCCESSFULLY\n")

@@ -1,12 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from UserHandler import UserHandler
 from DataBaseModel import db_path
 
-#from TransactionsHandler import TransactionHandler
-#from LinkHandler import LinkHandler
-#from CommissionHandler import CommissionHandler
-#from WalletHandler import WalletHandler
+from UserHandler import UserHandler
+from CategoryHandler import CategoryHandler
+from ReportsHandler import ReportsHandler
+from TransactionsHandler import TransactionsHandler
+from WalletHandler import WalletHandler
 
 
 class Singleton(type):
@@ -24,25 +24,24 @@ class DatabaseApi(metaclass=Singleton):
         __sessionMaker__.configure(bind=engine)
         self.__session__ = __sessionMaker__()
         self.__db_path__ = db_path
-        self.__userHandle__ = UserHandler(self.__session__)
 
-        #self.__transactionHandle__ = TransactionHandler(self.__session__)
-        #self.__walletHandle__ = WalletHandler(self.__session__, self.__userHandle__)
-
-        #self.__linkHandle__ = LinkHandler(self.__session__)
-        #self.__commissionHandle__ = CommissionHandler(self.__session__)
+        self.__user_hanlder__ = UserHandler(self.__session__)
+        self.__category_handler = CategoryHandler(self.__session__)
+        self.__report_handler = ReportsHandler(self.__session__)
+        self.__trans_handler = TransactionsHandler(self.__session__)
+        self.__wallet_handler = WalletHandler(self.__session__)
 
     def wallets(self):
-        return self.__walletHandle__
+        return self.__wallet_handler
 
     def transactions(self):
-        return self.__transactionHandle__
+        return self.__trans_handler
 
     def users(self):
-        return self.__userHandle__
+        return self.__user_hanlder__
 
-    def links(self):
-        return self.__linkHandle__
+    def reporst(self):
+        return self.__report_handler
 
-    def commissions(self):
-        return self.__commissionHandle__
+    def categories(self):
+        return self.__category_handler
