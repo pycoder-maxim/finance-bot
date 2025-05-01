@@ -9,7 +9,7 @@ class WalletHandler:
         return Walets(name=name, currency=currency, created_at= created_at)
 
     def get_wallets_by_user_id(self, user_id:int):
-        return self.__session__.query(Walets).filter(Walets.user_id == user_id)
+        return self.__session__.query(Walets).filter(Walets.user_id == user_id).all()
 
     def update_wallet(self, telegram_id: int, name: str = None, currency: str = None) -> bool:
         # TODO - доделать правильную логику

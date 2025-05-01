@@ -1,11 +1,12 @@
 import telebot
+from sqlalchemy.util import bool_or_str
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from database import *
 from telebot import types
 from datetime import datetime
 
 db_api = DatabaseApi()
-bot = telebot.TeleBot('') #стер токен
+bot = telebot.TeleBot() #стер токен
 
 #Переменные доходов
 icome = 0
@@ -55,16 +56,21 @@ def info(messege):
                                      '\n<b>4.Категори</b> - выводит список доступных категорий для данного пользователя (с разделением на типы, если это предусмотрено)' .format(messege),reply_markup= markup, parse_mode='html')
 # Функционал кнопок.
 @bot.message_handler(content_types=['text'])
-def bot_message(messege):
+def bot_message(messege:Message):
     if messege.chat.type == 'private':
         if messege.text == '1. Добавить доход ♻️':
             bot.send_message(messege.chat.id, 'Введите сумму дохода:' )
             bot.register_next_step_handler(messege,summa)
         elif messege.text == '2. Добавить расходы 🪫':
             bot.send_message(messege.chat.id, 'Введите сумму расхода:')
-            bot.register_next_step_handler(messege, sum_r)
+            #bot.register_next_step_handler(messege, sum_r)
         elif messege.text == '3. Текущий баланс 💰':
-            bot.register_next_step_handler(messege,ball)
+            wallets = db_api.wallets().get_wallets_by_user_id(messege.from_user.id)
+            str = ""
+            for wallet in wallets:
+                str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
+            bot.send_message(messege.chat.id, str)
+            #bot.register_next_step_handler(messege,ball)
         elif messege.text == '4. Категории 🖼️':
             bot.register_next_step_handler(messege,categ)
 

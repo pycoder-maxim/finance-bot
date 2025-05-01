@@ -59,13 +59,15 @@ class Walets(Base):
     name = Column(String)
     currency = Column(String)
     created_at = Column(String)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    value = Column(DECIMAL(32, 2))
+    user_id = Column(Integer, ForeignKey('users.telegramm_id'))
     user = relationship("Users", back_populates='walets')
     def __init__(self, user_id:int, name:str,currency:str,created_at:str):
         self.name = name
         self.currency = currency
         self.created_at = created_at
         self.user_id = user_id
+        self.value = 0
 
     def __repr__(self):
         info:str = f'ИМЯ, ВАЛЮТА:{self.name} {self.currency} {self.created_at}'

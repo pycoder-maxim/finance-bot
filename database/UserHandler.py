@@ -24,9 +24,9 @@ class UserHandler:
         self.__session__.add(user)
         self.__session__.commit()
 
-        wallet_rub_cash = Walets(user.id, name="Наличные рубли", currency="RUB", created_at= created_at)
-        wallet_usd_cash = Walets(user.id, name="Наличные доллары", currency="USD", created_at= created_at)
-        wallet_rub_card_sber = Walets(user.id, name = "Карта Сбер", currency="RUB", created_at= created_at)
+        wallet_rub_cash = Walets(user.telegramm_id, name="Наличные рубли", currency="RUB", created_at= created_at)
+        wallet_usd_cash = Walets(user.telegramm_id, name="Наличные доллары", currency="USD", created_at= created_at)
+        wallet_rub_card_sber = Walets(user.telegramm_id, name = "Карта Сбер", currency="RUB", created_at= created_at)
 
         #self.__session__.add(user)
         #self.__session__.commit()
@@ -35,7 +35,11 @@ class UserHandler:
         #wallet_usd_cash.user_id = user
         #wallet_rub_card_sber.user_id = user
 
-        self.__session__.add_all([wallet_rub_cash, wallet_usd_cash, wallet_rub_card_sber])
+        #self.__session__.add_all([wallet_rub_cash, wallet_usd_cash, wallet_rub_card_sber])
+        self.__session__.add(wallet_rub_cash)
+        self.__session__.add(wallet_usd_cash)
+        self.__session__.add(wallet_rub_card_sber)
+
         self.__session__.commit()
 
         return True
