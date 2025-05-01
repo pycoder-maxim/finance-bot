@@ -58,7 +58,18 @@ def info(messege):
 @bot.callback_query_handler(func=lambda call: True)
 def answer(call):
     if call.data == 'A':
+        wallets = db_api.wallets().get_wallets_by_user_id(call.from_user.id)
+        str = ""
+        for wallet in wallets:
+            str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
+        bot.send_message(call.message.chat.id, str)
         bot.send_message(call.message.chat.id, '<b>Выберете категорию:</b> ', parse_mode='html',)
+
+
+
+
+
+
 
 
 
