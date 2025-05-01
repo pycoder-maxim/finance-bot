@@ -6,7 +6,7 @@ from telebot import types
 from datetime import datetime
 
 db_api = DatabaseApi()
-bot = telebot.TeleBot() #стер токен
+bot = telebot.TeleBot('7607516429:AAFyO_v28qRICFTVkBtDcGar20Yge0WSa6A') #стер токен
 
 #Переменные доходов
 icome = 0
@@ -35,11 +35,11 @@ def main(messege:Message):
 def info(messege):
 
 # Меню бота (кнопки).
-    markup = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
-    command1 = types.InlineKeyboardButton('1. Добавить доход ♻️')
-    command2 = types.InlineKeyboardButton('2. Добавить расходы 🪫')
-    command3 = types.InlineKeyboardButton('3. Текущий баланс 💰')
-    command4 = types.InlineKeyboardButton('4. Категории 🖼️')
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. Добавить доход ♻️',callback_data='A')
+    command2 = types.InlineKeyboardButton('2. Добавить расходы 🪫',callback_data='B')
+    command3 = types.InlineKeyboardButton('3. Моя Статистика 📈',callback_data='C')
+    command4 = types.InlineKeyboardButton('4. Мой баланс 💰',callback_data='D')
     markup.add(command1,command2,command3,command4)
 
     bot.send_message(messege.chat.id,'Данный бот поможет вам оптимизировать ваши расходы с учетом ваших доходов за месяц.'
@@ -50,10 +50,23 @@ def info(messege):
                                      '\n'
                                      '\n<b>2.Добавить расходы</b> - добавляет операцию «Расход» '
                                      '\n'
-                                     '\n<b>3.Текущий баланс</b> - показывает текущий баланс (сумма всех доходов минус сумма всех расходов)'
+                                     '\n<b>3. Моя Статистика</b> - показывает статистику доходов и расходов за выбранный промежуток'
                                      '\n'
                 
-                                     '\n<b>4.Категори</b> - выводит список доступных категорий для данного пользователя (с разделением на типы, если это предусмотрено)' .format(messege),reply_markup= markup, parse_mode='html')
+                                     '\n<b>4. Мой баланс</b> - показывает ваш текущий баланс' .format(messege),reply_markup= markup, parse_mode='html')
+
+@bot.callback_query_handler(func=lambda call: True)
+def answer(call):
+    if call.data == 'A':
+        bot.send_message(call.message.chat.id, '<b>Выберете категорию:</b> ', parse_mode='html',)
+
+
+
+
+
+
+
+
 # Функционал кнопок.
 @bot.message_handler(content_types=['text'])
 def bot_message(messege:Message):
@@ -64,14 +77,14 @@ def bot_message(messege:Message):
         elif messege.text == '2. Добавить расходы 🪫':
             bot.send_message(messege.chat.id, 'Введите сумму расхода:')
             #bot.register_next_step_handler(messege, sum_r)
-        elif messege.text == '3. Текущий баланс 💰':
+        elif messege.text == '3. Моя Статистика 📈':
             wallets = db_api.wallets().get_wallets_by_user_id(messege.from_user.id)
             str = ""
             for wallet in wallets:
                 str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
             bot.send_message(messege.chat.id, str)
             #bot.register_next_step_handler(messege,ball)
-        elif messege.text == '4. Категории 🖼️':
+        elif messege.text == '4. Мой баланс 💰':
             bot.register_next_step_handler(messege,categ)
 
 '''Блок обработки категорий (КНОПКА 4)'''
