@@ -63,16 +63,18 @@ def answer(call):
         for wallet in wallets:
             str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
         bot.send_message(call.message.chat.id, str)
-        bot.send_message(call.message.chat.id, '<b>Выберете категорию:</b> ', parse_mode='html',)
+        bot.register_next_step_handler(add_icome)
 
 
 
-
-
-
-
-
-
+def add_icome(messege):
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. Доход за неделю ️', callback_data='I')
+    command2 = types.InlineKeyboardButton('2. Доход за месяц ', callback_data='II')
+    command3 = types.InlineKeyboardButton('3. Доход за год  ', callback_data='III')
+    markup.add(command1, command2, command3)
+    bot.send_message(messege.chat.id,
+                     'Выберети актуальный для вас период ')
 
 
 
