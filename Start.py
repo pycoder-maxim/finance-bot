@@ -1,9 +1,10 @@
 import telebot
 from sqlalchemy.util import bool_or_str
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message,CallbackQuery
 from database import *
 from telebot import types
 from datetime import datetime
+
 
 db_api = DatabaseApi()
 bot = telebot.TeleBot('7607516429:AAFyO_v28qRICFTVkBtDcGar20Yge0WSa6A') #стер токен
@@ -56,14 +57,15 @@ def info(messege):
                                      '\n<b>4. Мой баланс</b> - показывает ваш текущий баланс' .format(messege),reply_markup= markup, parse_mode='html')
 
 @bot.callback_query_handler(func=lambda call: True)
-def answer(call):
+def answer(call:CallbackQuery):
     if call.data == 'A':
         wallets = db_api.wallets().get_wallets_by_user_id(call.from_user.id)
         str = ""
         for wallet in wallets:
             str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
         bot.send_message(call.message.chat.id, str)
-        bot.register_next_step_handler(add_icome)
+        bot.register_next_step_handler(call.message,add_icome)
+
 
 
 
@@ -74,7 +76,7 @@ def add_icome(messege):
     command3 = types.InlineKeyboardButton('3. Доход за год  ', callback_data='III')
     markup.add(command1, command2, command3)
     bot.send_message(messege.chat.id,
-                     'Выберети актуальный для вас период ')
+                     'Выберети актуальный для вас период ',reply_markup= markup)
 
 
 
