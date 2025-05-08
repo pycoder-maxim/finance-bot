@@ -63,21 +63,33 @@ def answer(call:CallbackQuery):
         str = ""
         for wallet in wallets:
             str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
-        bot.send_message(call.message.chat.id, str)
-        bot.register_next_step_handler(call.message,add_icome)
+
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        command1 = types.InlineKeyboardButton('1. Доход за неделю ️', callback_data='I')
+        command2 = types.InlineKeyboardButton('2. Доход за месяц ', callback_data='II')
+        command3 = types.InlineKeyboardButton('3. Доход за год  ', callback_data='III')
+        markup.add(command1, command2, command3)
+
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                                  text='Выберите актуальный для вас период' + str, reply_markup=markup)
+    elif call.data == 'I':
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        command1 = types.InlineKeyboardButton('1. Рубли RUB 🇷🇺', callback_data='H')
+        command2 = types.InlineKeyboardButton('2. Доллыры USDT 🇺🇸', callback_data='G')
+        command3 = types.InlineKeyboardButton('3. Карта Сбер 💳', callback_data='F')
+        markup.add(command1, command2, command3)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберете нужный счет:',reply_markup=markup)
 
 
+    elif call.data == 'H':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите сумму:')
+        bot.register_next_step_handler(add_db)
 
 
-def add_icome(messege):
-    markup = types.InlineKeyboardMarkup(row_width=1)
-    command1 = types.InlineKeyboardButton('1. Доход за неделю ️', callback_data='I')
-    command2 = types.InlineKeyboardButton('2. Доход за месяц ', callback_data='II')
-    command3 = types.InlineKeyboardButton('3. Доход за год  ', callback_data='III')
-    markup.add(command1, command2, command3)
-    bot.send_message(messege.chat.id,
-                     'Выберети актуальный для вас период ',reply_markup= markup)
-
+def add_db():
+    pass
 
 
 
