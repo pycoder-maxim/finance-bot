@@ -5,6 +5,8 @@ from database import *
 from telebot import types
 from datetime import datetime
 from Config import BOT_TOKEN
+import Keybords
+
 
 db_api = DatabaseApi()
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -34,14 +36,9 @@ def main(messege:Message):
 
 @bot.message_handler(commands=['help'])
 def info(messege):
+    markup = Keybords.go_to_menu()
 
-# Меню бота (кнопки).
-    markup = types.InlineKeyboardMarkup(row_width=1)
-    command1 = types.InlineKeyboardButton('1. Добавить доход ♻️',callback_data='A')
-    command2 = types.InlineKeyboardButton('2. Добавить расходы 🪫',callback_data='B')
-    command3 = types.InlineKeyboardButton('3. Моя Статистика 📈',callback_data='C')
-    command4 = types.InlineKeyboardButton('4. Мой баланс 💰',callback_data='D')
-    markup.add(command1,command2,command3,command4)
+
 
     bot.send_message(messege.chat.id,'Данный бот поможет вам оптимизировать ваши расходы с учетом ваших доходов за месяц.'
                                      '\n'
@@ -64,25 +61,17 @@ def answer(call:CallbackQuery):
         for wallet in wallets:
             str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
 
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        command1 = types.InlineKeyboardButton('1. Доход за неделю ️', callback_data='I')
-        command2 = types.InlineKeyboardButton('2. Доход за месяц ', callback_data='II')
-        command3 = types.InlineKeyboardButton('3. Доход за год  ', callback_data='III')
-        markup.add(command1, command2, command3)
+        markup = Keybords.time_period()
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text='Выберите актуальный для вас период' + str, reply_markup=markup)
-    elif call.data == 'I':
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        command1 = types.InlineKeyboardButton('1. Рубли RUB 🇷🇺', callback_data='H')
-        command2 = types.InlineKeyboardButton('2. Доллыры USDT 🇺🇸', callback_data='G')
-        command3 = types.InlineKeyboardButton('3. Карта Сбер 💳', callback_data='F')
-        markup.add(command1, command2, command3)
+    elif call.data == 'currency_account_selection':
+        markup = Keybords.currency_account_selection()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете нужный счет:',reply_markup=markup)
 
 
-    elif call.data == 'H':
+    elif call.data == 'entering amount RUB':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму:')
         bot.register_next_step_handler(call.message,add_db)

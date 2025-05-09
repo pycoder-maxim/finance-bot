@@ -4,3 +4,4 @@ source ../venv/bin/activate
 ./venv/bin/python3 -m pip install --upgrade pip
 ./venv/bin/python3 -m pip install -r requirements.txt
 ./venv/bin/python3 -m pip install ../database/
+./venv/bin/python3 -m pip install ../Keybords/
