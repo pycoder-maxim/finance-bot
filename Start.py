@@ -4,10 +4,10 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message,Ca
 from database import *
 from telebot import types
 from datetime import datetime
-
+from Config import BOT_TOKEN
 
 db_api = DatabaseApi()
-bot = telebot.TeleBot('7607516429:AAFyO_v28qRICFTVkBtDcGar20Yge0WSa6A') #стер токен
+bot = telebot.TeleBot(BOT_TOKEN)
 
 #Переменные доходов
 icome = 0
@@ -85,11 +85,12 @@ def answer(call:CallbackQuery):
     elif call.data == 'H':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму:')
-        bot.register_next_step_handler(add_db)
+        bot.register_next_step_handler(call.message,add_db)
 
 
-def add_db():
-    pass
+def add_db(messege):
+    bot.send_message(messege.chat.id, 'Выберите категорию : <b>1.Категории доходов</b>  /  <b>2.Категории расходов</b>')
+
 
 
 
