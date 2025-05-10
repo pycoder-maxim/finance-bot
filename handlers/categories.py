@@ -14,12 +14,20 @@ def show_categories(message: Message):
 
     income = [cat.name for cat in categories if cat.ctype == "income"]
     expense = [cat.name for cat in categories if cat.ctype == "expense"]
+    savings = [cat.name for cat in categories if cat.ctype == "savings"]
+    goals = [cat.name for cat in categories if cat.ctype == "goals"]
 
     text = "<b>Ваши категории:</b>\n\n"
     if income:
         text += "💵 Доходы:\n" + "\n".join(f"— {name}" for name in income) + "\n\n"
     if expense:
-        text += "🪫 Расходы:\n" + "\n".join(f"— {name}" for name in expense)
+        text += "🪫 Расходы:\n" + "\n".join(f"— {name}" for name in expense) + "\n\n"
+    if savings:
+        text += ".. Сбережения:\n" + "\n".join(f"— {name}" for name in savings) + "\n\n"
+    if goals:
+        text += ".. Цели:\n" + "\n".join(f"— {name}" for name in goals)
+
+
 
     bot.send_message(message.chat.id, text, parse_mode="html")
 

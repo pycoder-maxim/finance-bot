@@ -28,8 +28,15 @@ def info(messege):
                      '\n'
                      '\n<b>3. Моя Статистика</b> - показывает статистику доходов и расходов за выбранный промежуток'
                      '\n'
-
-                     '\n<b>4. Мой баланс</b> - показывает ваш текущий баланс'.format(messege), reply_markup=markup,
+                     '\n<b>4. Мой баланс</b> - показывает ваш текущий баланс'
+                     '\n'
+                     '\n/balance'
+                     '\n'
+                     '\n/categories'
+                     '\n'
+                     '\n/set_category'
+                     '\n'
+                     '\n/remove_category'.format(messege), reply_markup=markup,
                      parse_mode='html')
 
 
