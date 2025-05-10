@@ -15,12 +15,13 @@ def receive_income_amount(msg: Message):
         income_amounts[user_id] = amount
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
-            InlineKeyboardButton("Зарплата 💵", callback_data="income_salary"),
+            InlineKeyboardButton("Зарплата 💵", callback_data="income_salary"), # TODO - модифицировать работу с категориями дохода
             InlineKeyboardButton("Подработка ⛏️", callback_data="income_freelance")
         )
         bot.send_message(msg.chat.id, "Выберите категорию дохода:", reply_markup=markup)
     except ValueError:
         bot.send_message(msg.chat.id, "Ошибка: введите корректную сумму (например, 15000.00).")
+        bot.register_next_step_handler(msg, receive_income_amount)
 
 @bot.callback_query_handler(func=lambda call: call.data in ["income_salary", "income_freelance"])
 def handle_income_category(call: CallbackQuery):
@@ -33,7 +34,9 @@ def handle_income_category(call: CallbackQuery):
     category = "Зарплата" if call.data == "income_salary" else "Подработка"
 
     # Сохраняем в базу данных
-    db_api.transactions().add(
+    #TODO - провалидировать вызовы хендлеров базы данных, если таковых нет
+    # добиавить или модифицировать таковую
+    db_api.transactions().add_transaction(
         user_id=user_id,
         amount=amount,
         category=category,

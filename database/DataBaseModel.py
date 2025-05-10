@@ -100,12 +100,15 @@ class Transactions(Base):
     name = Column(String)
     report_data = Column(String)
     created_at = Column(String)
+    amount = Column(DECIMAL(32, 2))
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("Users", back_populates='transactions')
-    def __init__(self,name:str,report_data:str,created_at:str):
+    def __init__(self,user_id:int, name:str,report_data:str,created_at:str):
         self.name = name
         self.report_data = report_data
         self.created_at = created_at
+        self.user_id = user_id
+        self.amount = 0
 
 
     def __repr__(self):
