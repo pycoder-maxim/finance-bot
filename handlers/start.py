@@ -1,12 +1,8 @@
-import telebot
 from telebot.types import Message
-from database import *
 from datetime import datetime
-from config import BOT_TOKEN
+from loader import bot, db_api
 import Keybords
 
-db_api = DatabaseApi()
-bot = telebot.TeleBot(BOT_TOKEN)
 
 
 @bot.message_handler(commands=['start'])
