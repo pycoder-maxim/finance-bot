@@ -4,7 +4,7 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message,Ca
 from database import *
 from telebot import types
 from datetime import datetime
-from Config import BOT_TOKEN
+from config import BOT_TOKEN
 import Keybords
 
 
@@ -79,9 +79,6 @@ def answer(call:CallbackQuery):
 
 def add_db(messege):
     bot.send_message(messege.chat.id, 'Выберите категорию : <b>1.Категории доходов</b>  /  <b>2.Категории расходов</b>')
-
-
-
 
 
 # Функционал кнопок.
