@@ -34,7 +34,7 @@ def handle_expense_category(call: CallbackQuery):
     category = "Спорт" if call.data == "expense_sport" else "Развлечения"
 
     # Сохраняем в базу данных
-    db_api.transactions().add(
+    db_api.transactions().add_transaction(
         user_id=user_id,
         amount=amount,
         category=category,

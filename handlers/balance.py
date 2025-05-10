@@ -16,3 +16,7 @@ def handle_balance(message: Message):
         f"📊 Текущий баланс: <b>{balance:.2f} руб</b>"
     )
     bot.send_message(message.chat.id, text, parse_mode="html")
+    db_api.transactions().add_transaction(
+        user_id=user_id,
+        ttype="income"
+    )

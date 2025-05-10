@@ -5,7 +5,8 @@ from loader import bot, db_api
 @bot.message_handler(commands=["categories"])
 def show_categories(message: Message):
     user_id = message.from_user.id
-    categories = db_api.categories().get_by_user(user_id)
+    categories = db_api.categories().get_categories_by_user_id(user_id)
+
 
     if not categories:
         bot.send_message(message.chat.id, "У вас пока нет категорий.")
