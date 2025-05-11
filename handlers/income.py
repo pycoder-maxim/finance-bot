@@ -1,3 +1,5 @@
+import datetime
+import keybords
 from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from loader import bot, db_api
 # Временное хранилище введённых сумм до выбора категории
@@ -40,7 +42,8 @@ def handle_income_category(call: CallbackQuery):
         user_id=user_id,
         amount=amount,
         category=category,
-        ttype="income"
+        report= "",
+        date= datetime.datetime.now().__str__()
     )
 
     bot.send_message(
@@ -60,12 +63,12 @@ def answer(call:CallbackQuery):
         for wallet in wallets:
             str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
 
-        markup = Keybords.time_period()
+        markup = keybords.time_period()
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text='Выберите актуальный для вас период' + str, reply_markup=markup)
     elif call.data == 'currency_account_selection':
-        markup = Keybords.currency_account_selection()
+        markup = keybords.currency_account_selection()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете нужный счет:',reply_markup=markup)
 
@@ -74,3 +77,8 @@ def answer(call:CallbackQuery):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму:')
         bot.register_next_step_handler(call.message,add_db)
+
+
+def add_db(messege):
+    bot.send_message(messege.chat.id, 'Выберите категорию : <b>1.Категории доходов</b>  /  <b>2.Категории расходов</b>')
+
