@@ -1,6 +1,6 @@
 from setuptools import setup
 
-setup(name='Keybords',
+setup(name='keybords',
       version='1.0',
       description='Пакет инструментов для клавиатуры',
       author='YK',

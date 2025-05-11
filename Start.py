@@ -1,7 +1,7 @@
 from telebot.types import  Message,CallbackQuery
 from loader import bot, db_api
 from telebot import types
-import Keybords
+import keybords
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -12,12 +12,12 @@ def answer(call:CallbackQuery):
         for wallet in wallets:
             str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
 
-        markup = Keybords.time_period()
+        markup = keybords.time_period()
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text='Выберите актуальный для вас период' + str, reply_markup=markup)
     elif call.data == 'currency_account_selection':
-        markup = Keybords.currency_account_selection()
+        markup = keybords.currency_account_selection()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете нужный счет:',reply_markup=markup)
 
