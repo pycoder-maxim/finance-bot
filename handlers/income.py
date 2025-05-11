@@ -51,3 +51,26 @@ def handle_income_category(call: CallbackQuery):
 
     # Очищаем временные данные
     del income_amounts[user_id]
+
+@bot.callback_query_handler(func=lambda call: True)
+def answer(call:CallbackQuery):
+    if call.data == 'A':
+        wallets = db_api.wallets().get_wallets_by_user_id(call.from_user.id)
+        str = ""
+        for wallet in wallets:
+            str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
+
+        markup = Keybords.time_period()
+
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                                  text='Выберите актуальный для вас период' + str, reply_markup=markup)
+    elif call.data == 'currency_account_selection':
+        markup = Keybords.currency_account_selection()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберете нужный счет:',reply_markup=markup)
+
+
+    elif call.data == 'entering amount RUB':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите сумму:')
+        bot.register_next_step_handler(call.message,add_db)

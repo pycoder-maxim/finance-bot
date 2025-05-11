@@ -49,3 +49,4 @@ def handle_expense_category(call: CallbackQuery):
 
     # Очищаем временные данные
     del expense_amounts[user_id]
+
