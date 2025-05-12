@@ -57,7 +57,7 @@ def handle_income_category(call: CallbackQuery):
 
 @bot.callback_query_handler(func=lambda call: True)
 def answer(call:CallbackQuery):
-    if call.data == 'add income':
+    if call.data == 'A':
         wallets = db_api.wallets().get_wallets_by_user_id(call.from_user.id)
         str = ""
         for wallet in wallets:
