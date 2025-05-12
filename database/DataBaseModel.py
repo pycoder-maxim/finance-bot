@@ -31,6 +31,16 @@ class Users(Base):
         f'CREATED AT:{self.created_at}'
         return info
 
+class Currencies(Base):
+    __tablename__ = "currencies"
+    id = Column(Integer, primary_key=True)
+    code = Column(String, unique=True)      # "USD", "RUB"
+    name = Column(String)                   # "Российский рубль"
+    symbol = Column(String)                 # "₽", "$"
+
+    def __repr__(self):
+        return f"{self.code} ({self.symbol})"
+
 
 class Categories(Base):
     __tablename__ = 'categories'
@@ -60,7 +70,7 @@ class Walets(Base):
     currency = Column(String)
     created_at = Column(String)
     value = Column(DECIMAL(32, 2))
-    user_id = Column(Integer, ForeignKey('users.telegramm_id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("Users", back_populates='walets')
     def __init__(self, user_id:int, name:str,currency:str,created_at:str):
         self.name = name
@@ -101,14 +111,29 @@ class Transactions(Base):
     report_data = Column(String)
     created_at = Column(String)
     amount = Column(DECIMAL(32, 2))
+    ttype = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
+    currency_id = Column(Integer, ForeignKey('currencies.id'))
+    wallet_id = Column(Integer, ForeignKey('walets.id'))
+    category_id = Column(Integer, ForeignKey('categories.id'))
+
     user = relationship("Users", back_populates='transactions')
-    def __init__(self,user_id:int, name:str,report_data:str,created_at:str):
+    currency = relationship("Currencies")
+    wallet = relationship("Walets")
+    category = relationship("Categories")
+
+    def __init__(self, user_id: int, name: str, report_data: str, created_at: str,
+                 amount: float = 0, ttype: str = None, currency_id: int = None,
+                 wallet_id: int = None, category_id: int = None):
         self.name = name
         self.report_data = report_data
         self.created_at = created_at
         self.user_id = user_id
-        self.amount = 0
+        self.amount = amount
+        self.ttype = ttype
+        self.currency_id = currency_id
+        self.wallet_id = wallet_id
+        self.category_id = category_id
 
 
     def __repr__(self):

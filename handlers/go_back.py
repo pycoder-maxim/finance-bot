@@ -5,7 +5,7 @@ import keybords
 
 
 @bot.callback_query_handler(func=lambda call: call.data in ['go_back'])
-def go_back(call):
+def go_back(call:CallbackQuery):
     print(call)
     markup = keybords.go_to_menu()
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,

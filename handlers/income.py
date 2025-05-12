@@ -27,6 +27,7 @@ def receive_income_amount(msg: Message):
 
 @bot.callback_query_handler(func=lambda call: call.data in ["income_salary", "income_freelance"])
 def handle_income_category(call: CallbackQuery):
+    print("da da")
     user_id = call.from_user.id
     amount = income_amounts.get(user_id)
     if amount is None:
@@ -57,6 +58,7 @@ def handle_income_category(call: CallbackQuery):
 
 @bot.callback_query_handler(func=lambda call: True)
 def answer(call:CallbackQuery):
+    print("была нажата кнопка назад")
     if call.data == 'add income':
         wallets = db_api.wallets().get_wallets_by_user_id(call.from_user.id)
         str = ""
@@ -77,6 +79,10 @@ def answer(call:CallbackQuery):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму:')
         bot.register_next_step_handler(call.message,add_db)
+    elif call.data == "go_back":
+        markup = keybords.go_to_menu()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                                  text='текст главного меню', reply_markup=markup)
 
 
 def add_db(messege):
