@@ -1,6 +1,7 @@
 from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from loader import bot, db_api
 
+
 # Временное хранилище введённых расходов до выбора категории
 expense_amounts = {}  # user_id -> сумма
 
