@@ -68,22 +68,41 @@ def answer(call:CallbackQuery):
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text='Выберите актуальный для вас период' + str, reply_markup=markup)
-    elif call.data == 'currency_account_selection':
+    elif call.data == 'currency_account_selection_a_week':
         markup = keybords.currency_account_selection()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете нужный счет:',reply_markup=markup)
-
-
+# Обработчик кнопки 1.Доход за неделю
+#______________________________________________________________________________________________________________________
     elif call.data == 'entering amount RUB':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму:')
         bot.register_next_step_handler(call.message,add_db)
+# Обработчик кнопки 4.Вернуться назад
+#______________________________________________________________________________________________________________________
     elif call.data == "go_back":
         markup = keybords.go_to_menu()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text='текст главного меню', reply_markup=markup)
+# Обработчик кнопки 2. Доход за месяц
+#______________________________________________________________________________________________________________________
+    elif call.data == 'currency_account_selection_a_mounth':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите сумму:')
+        bot.register_next_step_handler(call.message, add_db)
 
 
-def add_db(messege):
-    bot.send_message(messege.chat.id, 'Выберите категорию : <b>1.Категории доходов</b>  /  <b>2.Категории расходов</b>')
+
+
+
+
+def add_db(messege,user_id,amount,category):
+    db_api.transactions().add_transaction(user_id=user_id,
+                                          amount=amount,
+                                          category=category,
+                                          report="",
+                                          date=datetime.datetime.now().__str__())
+    bot.send_message(messege.chat.id, 'Доход добавлен')
+
+
 

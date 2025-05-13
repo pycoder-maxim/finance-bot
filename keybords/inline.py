@@ -15,8 +15,8 @@ def go_to_menu():
 #______________________________________________________________________________________________________________________
 def time_period():
     markup = types.InlineKeyboardMarkup(row_width=1)
-    command1 = types.InlineKeyboardButton('1. Доход за неделю ️', callback_data='currency_account_selection')
-    command2 = types.InlineKeyboardButton('2. Доход за месяц ', callback_data='II')
+    command1 = types.InlineKeyboardButton('1. Доход за неделю ️', callback_data='currency_account_selection_a_week')
+    command2 = types.InlineKeyboardButton('2. Доход за месяц ', callback_data='currency_account_selection_a_mounth')
     command3 = types.InlineKeyboardButton('3. Доход за год  ', callback_data='III')
     command4 = types.InlineKeyboardButton('4. Вернуться назад ', callback_data='go_back')
     markup.add(command1, command2, command3,command4)
