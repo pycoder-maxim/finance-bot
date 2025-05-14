@@ -93,10 +93,10 @@ def answer(call:CallbackQuery):
 
 
 
-
-
-
-def add_db(messege,user_id,amount,category):
+def add_db(messege:Message):
+    user_id = messege.from_user.id
+    amount = float(messege.text)
+    category = 'income'
     db_api.transactions().add_transaction(user_id=user_id,
                                           amount=amount,
                                           category=category,
