@@ -19,6 +19,11 @@ class Users(Base):
     reports = relationship("Reports", back_populates="user")
     transactions = relationship("Transactions", back_populates="user")
 
+
+
+
+
+
     def __init__(self,telegramm_id:int,first_name:str,last_name:str,user_name:str,created_at:str):
         self.telegramm_id = telegramm_id
         self.first_name = first_name
@@ -36,7 +41,12 @@ class Currencies(Base):
     id = Column(Integer, primary_key=True)
     code = Column(String, unique=True)      # "USD", "RUB"
     name = Column(String)                   # "Российский рубль"
-    symbol = Column(String)                 # "₽", "$"
+    symbol = Column(String)          # "₽", "$"
+
+    def __init__(self,code:str,name:str,symbol:str):
+        self.code = code
+        self.name = name
+        self.symbol = symbol
 
     def __repr__(self):
         return f"{self.code} ({self.symbol})"
@@ -46,7 +56,9 @@ class Categories(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    ctype = Column(String) # сокрещение от category type
+    ctype = Column(String)
+
+    # сокрещение от category type
     # возможные значения - "income" "expense" "savings" "goal"
 
     created_at = Column(String)
@@ -117,10 +129,12 @@ class Transactions(Base):
     wallet_id = Column(Integer, ForeignKey('walets.id'))
     category_id = Column(Integer, ForeignKey('categories.id'))
 
+
     user = relationship("Users", back_populates='transactions')
     currency = relationship("Currencies")
     wallet = relationship("Walets")
     category = relationship("Categories")
+
 
     def __init__(self, user_id: int, name: str, report_data: str, created_at: str,
                  amount: float = 0, ttype: str = None, currency_id: int = None,

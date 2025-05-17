@@ -7,7 +7,7 @@ from CategoryHandler import CategoryHandler
 from ReportsHandler import ReportsHandler
 from TransactionsHandler import TransactionsHandler
 from WalletHandler import WalletHandler
-
+from CurrenciesHandler import CurrenciesHandler
 
 class Singleton(type):
     _instances = {}
@@ -19,17 +19,18 @@ class Singleton(type):
 
 class DatabaseApi(metaclass=Singleton):
     def __init__(self):
-        engine = create_engine(f"sqlite:///{db_path}")
+        engine = create_engine(f"sqlite:///{db_path}") #Cоздание двигателя базы данных SQLite для указанной базы данных с помощью функции create_engine из библиотеки SQLAlchemy.
         __sessionMaker__ = sessionmaker()
         __sessionMaker__.configure(bind=engine)
         self.__session__ = __sessionMaker__()
-        self.__db_path__ = db_path
+        self.__db_path__ = db_path # путь к базе данных в файловой системе
 
         self.__user_hanlder__ = UserHandler(self.__session__)
         self.__category_handler = CategoryHandler(self.__session__)
         self.__report_handler = ReportsHandler(self.__session__)
         self.__trans_handler = TransactionsHandler(self.__session__)
         self.__wallet_handler = WalletHandler(self.__session__)
+        self.__currencies_handler = CurrenciesHandler(self.__session__)
 
     def wallets(self):
         return self.__wallet_handler
@@ -45,3 +46,6 @@ class DatabaseApi(metaclass=Singleton):
 
     def categories(self):
         return self.__category_handler
+
+    def currencies(self):
+        return self.__currencies_handler
