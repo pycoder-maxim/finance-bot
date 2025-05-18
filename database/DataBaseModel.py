@@ -24,6 +24,8 @@ class Users(Base):
 
 
 
+
+
     def __init__(self,telegramm_id:int,first_name:str,last_name:str,user_name:str,created_at:str):
         self.telegramm_id = telegramm_id
         self.first_name = first_name
@@ -42,6 +44,9 @@ class Currencies(Base):
     code = Column(String, unique=True)      # "USD", "RUB"
     name = Column(String)                   # "Российский рубль"
     symbol = Column(String)          # "₽", "$"
+
+
+
 
     def __init__(self,code:str,name:str,symbol:str):
         self.code = code
@@ -131,7 +136,7 @@ class Transactions(Base):
 
 
     user = relationship("Users", back_populates='transactions')
-    currency = relationship("Currencies")
+    currency = relationship("Currencies",backref='transactions')
     wallet = relationship("Walets")
     category = relationship("Categories")
 

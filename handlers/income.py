@@ -4,7 +4,7 @@ import expense
 import keybords
 from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from loader import bot, db_api
-# Временное хранилище введённых сумм до выбора категории
+# Временное хранилище введённых сумм до выбора категории.
 income_amounts = {}  # user_id -> сумма
 
 @bot.message_handler(func=lambda msg: msg.text == "1. Добавить доход ♻️")
@@ -71,8 +71,11 @@ def answer(call:CallbackQuery):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text='Выберите актуальный для вас период' + str, reply_markup=markup)
 
-# Обработчик кнопки 1.Доход за неделю
+
+# Обработчик кнопки 1.Доход за неделю.
 # ______________________________________________________________________________________________________________________
+
+
     elif call.data == 'currency_account_selection_a_week':
         markup = keybords.currency_account_selection()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
@@ -81,15 +84,21 @@ def answer(call:CallbackQuery):
     elif call.data == 'entering amount RUB':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму:')
-        bot.register_next_step_handler(call.message,add_db_RUB)
+        bot.register_next_step_handler(call.message,add_db_rub)
 
     elif call.data == 'entering amount USDT':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму в USD:')
+        bot.register_next_step_handler(call.message, add_db_usd)
+
+    elif call.data == 'entering amount Credit_card':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите сумму котрую хотите списать с карты:')
+        bot.register_next_step_handler(call.message, add_db_credit_card)
 
 
 
-# Обработчик кнопки 2. Доход за месяц
+# Обработчик кнопки 2. Доход за месяц.
 #______________________________________________________________________________________________________________________
     elif call.data == 'currency_account_selection_a_mounth':
         markup = keybords.currency_account_selection()
@@ -99,9 +108,21 @@ def answer(call:CallbackQuery):
     elif call.data == 'entering amount RUB':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму:')
-        bot.register_next_step_handler(call.message,add_db_RUB)
+        bot.register_next_step_handler(call.message,add_db_rub)
 
-# Обработчик кнопки 3. Доход за год
+    elif call.data == 'entering amount USDT':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите сумму в USD:')
+        bot.register_next_step_handler(call.message, add_db_usd)
+
+    elif call.data == 'entering amount Credit_card':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите сумму котрую хотите списать с карты:')
+        bot.register_next_step_handler(call.message, add_db_credit_card)
+
+
+
+# Обработчик кнопки 3. Доход за год.
 # ______________________________________________________________________________________________________________________
     elif call.data == 'currency_account_selection_a_year':
         markup = keybords.currency_account_selection()
@@ -111,16 +132,64 @@ def answer(call:CallbackQuery):
     elif call.data == 'entering amount RUB':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму:')
-        bot.register_next_step_handler(call.message,add_db_RUB)
+        bot.register_next_step_handler(call.message,add_db_rub)
 
-# Обработчик кнопки 4.Вернуться назад
+    elif call.data == 'entering amount USDT':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите сумму в USD:')
+        bot.register_next_step_handler(call.message, add_db_usd)
+
+    elif call.data == 'entering amount Credit_card':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите сумму котрую хотите списать с карты:')
+        bot.register_next_step_handler(call.message, add_db_credit_card)
+
+
+# Обработчик кнопки 4.Вернуться назад.
 # ______________________________________________________________________________________________________________________
+
+
     elif call.data == "go_back":
         markup = keybords.go_to_menu()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                  text='текст главного меню', reply_markup=markup)
+                                  text='*Финансовый бот-помощник*\n\n'
+                                       'Этот бот поможет вам *оптимизировать расходы и вести учёт доходов* в течение месяца.\n\n'
+                                       '*📋 Доступные команды:*\n\n'
+                                       '1. *Добавить доходы* — операция дохода  \n'
+                                       '2. *Добавить расходы* — операция расхода  \n'
+                                       '3. *Моя статистика* — показывает статистику доходов и расходов за выбранный период  \n'
+                                       '4. *Мой баланс* — текущий финансовый баланс\n\n'
+                                       '*💬 Команды бота:*\n\n'
+                                       '/balance — показать текущий баланс  \n'
+                                       '/categories — список всех категорий  \n'
+                                       '/set_category <название> [тип] — добавить новую категорию (тип = income или expense, по умолчанию expense)  \n'
+                                       '/remove_category <название> — удалить существующую категорию', reply_markup=markup,parse_mode='Markdown')
 
-def add_db_RUB(messege:Message):
+
+# Обработчик кнопки 4.Вернуться назад к выбору временного промежутка.
+# ______________________________________________________________________________________________________________________
+
+    elif call.data == "go_back_to_time_period":
+        markup = keybords.time_period()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберите актуальный для вас период', reply_markup=markup)
+
+
+
+
+
+# Фенкции по добавления в БД.
+# ______________________________________________________________________________________________________________________
+# ______________________________________________________________________________________________________________________
+
+
+
+
+# Добавдление RUS RUB базу данных.
+# ______________________________________________________________________________________________________________________
+
+    #Транзакции(transactions)
+def add_db_rub(messege:Message):
     user_id = messege.from_user.id
     amount = float(messege.text)
     category = 'income'
@@ -129,19 +198,62 @@ def add_db_RUB(messege:Message):
                                           category=category,
                                           report="",
                                           date=datetime.datetime.now().__str__())
-
+    #Валюта(currencies)
     symbol = str("₽")
     name = str("Российский рубль")
     code = str("RUB")
     db_api.currencies().add_currencies(
                                        symbol=symbol,
                                        name=name,
-    code=code)
-    bot.send_message(messege.chat.id, 'Доход добавлен')
+                                       code=code)
+
+    bot.send_message(messege.chat.id, f'Доход добавлен:{amount} {symbol}')
 
 
 
+# Добавдление USD базу данных.
+# ______________________________________________________________________________________________________________________
+
+    #Транзакции(transactions)
+def add_db_usd(messege:Message):
+    user_id = messege.from_user.id
+    amount = float(messege.text)
+    category = 'income'
+    db_api.transactions().add_transaction(user_id=user_id,
+                                          amount=amount,
+                                          category=category,
+                                          report="",
+                                          date=datetime.datetime.now().__str__())
+    # Валюта(currencies)
+    symbol = str("$")
+    name = str("Доллар США")
+    code = str("USD")
+    db_api.currencies().add_currencies(
+                                       symbol=symbol,
+                                       name=name,
+                                       code=code)
+    bot.send_message(messege.chat.id, f'Доход добавлен:{amount} {symbol}')
 
 
+# Добавдление CR Card базу данных.
+# ______________________________________________________________________________________________________________________
 
-
+    # Транзакции(transactions)
+def add_db_credit_card(messege:Message):
+    user_id = messege.from_user.id
+    amount = float(messege.text)
+    category = 'income'
+    db_api.transactions().add_transaction(user_id=user_id,
+                                          amount=amount,
+                                          category=category,
+                                          report="",
+                                          date=datetime.datetime.now().__str__())
+    # Валюта(currencies)
+    symbol = str("CR Card")
+    name = str("Карта Сбер ")
+    code = str("Credit_card")
+    db_api.currencies().add_currencies(
+                                       symbol=symbol,
+                                       name=name,
+                                       code=code)
+    bot.send_message(messege.chat.id, f'Доход добавлен:{amount} {symbol}')
