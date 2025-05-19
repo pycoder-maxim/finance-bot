@@ -36,7 +36,7 @@ class TransactionsHandler:
         self.__session__.commit()
         return True
 
-    def add_transaction(self, user_id:int, amount:float, category: str, report:str, date:str) -> Transactions:
+    def add_transaction(self, user_id:int, amount:float, category: str, report:str, date:str, curr:str) -> Transactions:
         transactions = Transactions(user_id, category, report, date)
         amount_dec = decimal.Decimal(amount)
         transactions.amount = amount_dec

@@ -11,6 +11,7 @@ class CurrenciesHandler:
 
     def add_currencies(self,  code: str, name:str, symbol:str) -> Currencies:
         currencies = Currencies( code, name, symbol)
+
         self.__session__.add(currencies)
         self.__session__.commit()
         return currencies
@@ -32,3 +33,6 @@ class CurrenciesHandler:
         self.__session__.delete(currencies)
         self.__session__.commit()
         return True
+
+    def get_curreny_by_code(self, code:str):
+        if code == "USD":

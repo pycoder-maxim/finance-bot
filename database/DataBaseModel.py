@@ -164,5 +164,6 @@ if __name__ == '__main__':
     engine = create_engine(f"sqlite:///db/finans_bot_db.db")
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
+    # TODO - сделать создание всех видов валют, которыми пальзуется клиент бота
     print("DATABASE CREATED SUCCESSFULLY\n")
     print(__name__)
