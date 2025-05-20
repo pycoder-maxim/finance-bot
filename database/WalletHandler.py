@@ -1,4 +1,4 @@
-from DataBaseModel import Walets, Users
+from DataBaseModel import Wallets, Users
 from sqlalchemy.orm import Session
 
 class WalletHandler:
@@ -6,10 +6,10 @@ class WalletHandler:
         self.__session__ = session
 
     def create_wallet(self, name:str, currency:str, created_at:str, user_id:int):
-        return Walets(name=name, currency=currency, created_at= created_at)
+        return Wallets(name=name, currency=currency, created_at= created_at)
 
     def get_wallets_by_user_id(self, user_id:int):
-        return self.__session__.query(Walets).filter(Walets.user_id == user_id).all()
+        return self.__session__.query(Wallets).filter(Wallets.user_id == user_id).all()
 
     def update_wallet(self, telegram_id: int, name: str = None, currency: str = None) -> bool:
         # TODO - доделать правильную логику
@@ -17,7 +17,7 @@ class WalletHandler:
         if not user:
             return False  # Пользователь не найден
 
-        wallet = self.__session__.query(Walets).filter(Walets.user_id == user.id).first()
+        wallet = self.__session__.query(Wallets).filter(Wallets.user_id == user.id).first()
         if not wallet:
             return False  # Кошелек не найден
 
@@ -34,8 +34,8 @@ class WalletHandler:
         if not user:
             return False  # Пользователь не найден
         wallet = (
-            self.__session__.query(Walets)
-            .filter(Walets.user_id == user.id, Walets.name == name, Walets.currency == currency)
+            self.__session__.query(Wallets)
+            .filter(Wallets.user_id == user.id, Wallets.name == name, Wallets.currency == currency)
             .first()
         )
         if not wallet:

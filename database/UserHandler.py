@@ -1,4 +1,4 @@
-from DataBaseModel import Users, Walets
+from DataBaseModel import Users, Wallets
 from sqlalchemy.orm import Session
 from datetime import datetime, date, time, timedelta
 
@@ -24,9 +24,9 @@ class UserHandler:
         self.__session__.add(user)
         self.__session__.commit()
 
-        wallet_rub_cash = Walets(user.telegramm_id, name="Наличные рубли", currency="RUB", created_at= created_at)
-        wallet_usd_cash = Walets(user.telegramm_id, name="Наличные доллары", currency="USD", created_at= created_at)
-        wallet_rub_card_sber = Walets(user.telegramm_id, name = "Карта Сбер", currency="RUB", created_at= created_at)
+        wallet_rub_cash = Wallets(user.telegramm_id, name="Наличные рубли", currency="RUB", created_at= created_at)
+        wallet_usd_cash = Wallets(user.telegramm_id, name="Наличные доллары", currency="USD", created_at= created_at)
+        wallet_rub_card_sber = Wallets(user.telegramm_id, name = "Карта Сбер", currency="RUB", created_at= created_at)
 
         #self.__session__.add(user)
         #self.__session__.commit()
