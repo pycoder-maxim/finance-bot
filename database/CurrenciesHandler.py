@@ -36,3 +36,4 @@ class CurrenciesHandler:
 
     def get_curreny_by_code(self, code:str):
         if code == "USD":
+            return self.__session__.query(Currencies).filter(Currencies.id == Currencies.id).all()

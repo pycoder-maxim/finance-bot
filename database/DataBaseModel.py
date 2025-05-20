@@ -1,10 +1,14 @@
 from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy import Column, Integer, String, Boolean, DECIMAL, BigInteger
+from sqlalchemy import Column, Integer, String, Boolean, DECIMAL, BigInteger,MetaData
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
 db_path = 'database/db/finans_bot_db.db'
 Base = declarative_base()
+
+
+
+#_______________________________________________________________________________________________________________________
 
 class Users(Base):
     __tablename__ = 'users'
@@ -22,10 +26,6 @@ class Users(Base):
 
 
 
-
-
-
-
     def __init__(self,telegramm_id:int,first_name:str,last_name:str,user_name:str,created_at:str):
         self.telegramm_id = telegramm_id
         self.first_name = first_name
@@ -38,12 +38,16 @@ class Users(Base):
         f'CREATED AT:{self.created_at}'
         return info
 
+
+#_______________________________________________________________________________________________________________________
+
 class Currencies(Base):
     __tablename__ = "currencies"
     id = Column(Integer, primary_key=True)
     code = Column(String, unique=True)      # "USD", "RUB"
     name = Column(String)                   # "Российский рубль"
     symbol = Column(String)          # "₽", "$"
+
 
 
 
@@ -56,6 +60,8 @@ class Currencies(Base):
     def __repr__(self):
         return f"{self.code} ({self.symbol})"
 
+
+#_______________________________________________________________________________________________________________________
 
 class Categories(Base):
     __tablename__ = 'categories'
@@ -79,6 +85,7 @@ class Categories(Base):
         info:str = f'ИМЯ, КАТЕГОРИЯ:{self.name} {self.ctype} {self.created_at}'
         return info
 
+#_______________________________________________________________________________________________________________________
 
 class Walets(Base):
     __tablename__ = 'walets'
@@ -120,6 +127,7 @@ class Reports(Base):
         return info
 
 
+#_______________________________________________________________________________________________________________________
 
 class Transactions(Base):
     __tablename__ = 'transactions'
@@ -133,12 +141,12 @@ class Transactions(Base):
     currency_id = Column(Integer, ForeignKey('currencies.id'))
     wallet_id = Column(Integer, ForeignKey('walets.id'))
     category_id = Column(Integer, ForeignKey('categories.id'))
-
-
     user = relationship("Users", back_populates='transactions')
-    currency = relationship("Currencies",backref='transactions')
     wallet = relationship("Walets")
     category = relationship("Categories")
+    currencies = relationship("Currencies")
+
+
 
 
     def __init__(self, user_id: int, name: str, report_data: str, created_at: str,

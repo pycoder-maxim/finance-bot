@@ -192,8 +192,9 @@ def answer(call:CallbackQuery):
 def add_db_rub(messege:Message):
     user_id = messege.from_user.id
     amount = float(messege.text)
+    curr = messege.from_user.id
     category = 'income'
-    db_api.transactions().add_transaction(user_id=user_id,
+    db_api.transactions().add_transaction(user_id=user_id,curr=curr,
                                           amount=amount,
                                           category=category,
                                           report="",
@@ -218,8 +219,9 @@ def add_db_rub(messege:Message):
 def add_db_usd(messege:Message):
     user_id = messege.from_user.id
     amount = float(messege.text)
+    curr = messege.from_user.id
     category = 'income'
-    db_api.transactions().add_transaction(user_id=user_id,
+    db_api.transactions().add_transaction(user_id=user_id,curr=curr,
                                           amount=amount,
                                           category=category,
                                           report="",
@@ -242,6 +244,7 @@ def add_db_usd(messege:Message):
 def add_db_credit_card(messege:Message):
     user_id = messege.from_user.id
     amount = float(messege.text)
+
     category = 'income'
     db_api.transactions().add_transaction(user_id=user_id,
                                           amount=amount,
