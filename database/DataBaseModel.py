@@ -15,10 +15,10 @@ class Users(Base):
     last_name = Column(String)
     user_name = Column(String)
     created_at = Column(String)
-    categories = relationship("Categories", back_populates="users")
-    wallets = relationship("Wallets", back_populates="users")
-    reports = relationship("Reports", back_populates="users")
-    transactions = relationship("Transactions", back_populates="users")
+    categories = relationship("Categories", back_populates="user")
+    wallets = relationship("Wallets", back_populates="user")
+    reports = relationship("Reports", back_populates="user")
+    transactions = relationship("Transactions", back_populates="user")
 
     def __init__(self,telegramm_id:int,first_name:str,last_name:str,user_name:str,created_at:str):
         self.telegramm_id = telegramm_id
@@ -40,8 +40,7 @@ class Currencies(Base):
     code = Column(String, unique=True)      # "USD", "RUB"
     name = Column(String)                   # "Российский рубль"
     symbol = Column(String)          # "₽", "$"
-    wallet = relationship("Wallets", back_populates="currencies")
-    transactions = relationship("Transactions", back_populates="currencies")
+    wallet = relationship("Wallets", back_populates="currency")
 
     def __init__(self,code:str,name:str,symbol:str):
         self.code = code
@@ -60,7 +59,7 @@ class Categories(Base):
                             # возможные значения - "income" "expense" "savings" "goal"
     created_at = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
-    users = relationship("Users",back_populates='categories')
+    user = relationship("Users",back_populates='categories')
 
     def __init__(self,name:str,ctype:str,created_at:str):
         self.name = name
@@ -82,7 +81,7 @@ class Wallets(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("Users", back_populates='wallets')
     currency_id = Column(Integer, ForeignKey('currencies.id'))
-    currency = relationship("Currencies", back_populates="wallets")
+    currency = relationship("Currencies", back_populates="wallet")
 
     def __init__(self, user_id:int, name:str,currency:str,created_at:str):
         self.name = name
@@ -137,7 +136,7 @@ class Transactions(Base):
     user = relationship("Users", back_populates='transactions')
     wallet = relationship("Wallets")
     category = relationship("Categories")
-    currencies = relationship("Currencies", back_populates='transactions')
+    currency = relationship("Currencies")
 
     def __init__(self, user_id: int, name: str, report_data: str, created_at: str,
                  amount: float = 0, ttype: str = None, currency_id: int = None,
