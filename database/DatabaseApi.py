@@ -7,7 +7,7 @@ from CategoryHandler import CategoryHandler
 from ReportsHandler import ReportsHandler
 from TransactionsHandler import TransactionsHandler
 from WalletHandler import WalletHandler
-from CurrenciesHandler import CurrenciesHandler
+from CurrenciesHandler import CurrenciesHandler, list_of_default_currencies
 
 class Singleton(type):
     _instances = {}
@@ -30,7 +30,11 @@ class DatabaseApi(metaclass=Singleton):
         self.__report_handler = ReportsHandler(self.__session__)
         self.__trans_handler = TransactionsHandler(self.__session__)
         self.__wallet_handler = WalletHandler(self.__session__)
+
         self.__currencies_handler = CurrenciesHandler(self.__session__)
+        self.__add_default_currencies__()
+
+
 
     def wallets(self):
         return self.__wallet_handler
@@ -49,3 +53,9 @@ class DatabaseApi(metaclass=Singleton):
 
     def currencies(self):
         return self.__currencies_handler
+
+    def __add_default_currencies__(self):
+        print("salam")
+        # map(lambda cur: self.__currencies_handler.__add_currencies__(*cur), list_of_default_currencies)
+        for cur in list_of_default_currencies:
+            self.__currencies_handler.__add_currencies__(*cur)

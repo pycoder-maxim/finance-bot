@@ -40,7 +40,6 @@ class Currencies(Base):
     code = Column(String, unique=True)      # "USD", "RUB"
     name = Column(String)                   # "Российский рубль"
     symbol = Column(String)          # "₽", "$"
-    wallet = relationship("Wallets", back_populates="currency")
 
     def __init__(self,code:str,name:str,symbol:str):
         self.code = code
@@ -81,11 +80,12 @@ class Wallets(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("Users", back_populates='wallets')
     currency_id = Column(Integer, ForeignKey('currencies.id'))
-    currency = relationship("Currencies", back_populates="wallet")
+    currency = relationship("Currencies")
 
-    def __init__(self, user_id:int, name:str,currency:str,created_at:str):
+    def __init__(self, user_id:int, name:str, currency:Currencies, created_at:str):
         self.name = name
         self.currency = currency
+        self.currency_id = currency.id
         self.created_at = created_at
         self.user_id = user_id
         self.value = 0
@@ -163,4 +163,6 @@ if __name__ == '__main__':
     Base.metadata.create_all(engine)
     # TODO - сделать создание всех видов валют, которыми пальзуется клиент бота
     print("DATABASE CREATED SUCCESSFULLY\n")
+
+
     print(__name__)

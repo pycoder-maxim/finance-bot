@@ -64,7 +64,7 @@ def answer(call:CallbackQuery):
         wallets = db_api.wallets().get_wallets_by_user_id(call.from_user.id)
         str = ""
         for wallet in wallets:
-            str += wallet.name + " " + wallet.currency + " " + wallet.value.__str__() + "\n"
+            str += wallet.name + " " + wallet.currency.name + " " + wallet.value.__str__() + "\n"
 
         markup = keybords.time_period()
 
@@ -203,10 +203,12 @@ def add_db_rub(messege:Message):
     symbol = str("₽")
     name = str("Российский рубль")
     code = str("RUB")
+    """
     db_api.currencies().add_currencies(
                                        symbol=symbol,
                                        name=name,
                                        code=code)
+    """
 
     bot.send_message(messege.chat.id, f'Доход добавлен:{amount} {symbol}')
 

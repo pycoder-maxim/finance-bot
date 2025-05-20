@@ -1,20 +1,29 @@
 from DataBaseModel import Currencies
 from sqlalchemy.orm import Session
 
+list_of_default_currencies = [("RUB", "Российский рубль", "₽"), ("USD", "Американский доллар", "$"), ("EUR", "Евро", "€")]
+
 
 class CurrenciesHandler:
     def __init__(self, session:Session):
         self.__session__ = session
 
-    def get_Currencies_by_user_id(self,user_id: int) -> list[Currencies]:
-        return self.__session__.query(Currencies).filter(Currencies.user_id == user_id).all()
+    #def get_Currencies_by_user_id(self,user_id: int) -> list[Currencies]:
+    #    return self.__session__.query(Currencies).filter(Currencies.user_id == user_id).all()
 
-    def add_currencies(self,  code: str, name:str, symbol:str) -> Currencies:
-        currencies = Currencies( code, name, symbol)
+    def get_all_currencies(self)-> list[Currencies]:
+        return self.__session__.query(Currencies).all()
 
-        self.__session__.add(currencies)
-        self.__session__.commit()
-        return currencies
+    def __add_currencies__(self,  code: str, name:str, symbol:str) -> Currencies:
+        not_exists = self.__session__.query(Currencies.code).filter_by(code=code).first() is None
+        print(not_exists)
+        if not_exists:
+            print(code)
+            currencies = Currencies(code, name, symbol)
+            self.__session__.add(currencies)
+            self.__session__.commit()
+            return currencies
+        return None
 
     def update_currencies(self,currencies_id: int, **kwargs) -> bool:
         currencies = self.__session__.query(Currencies).get(currencies_id)

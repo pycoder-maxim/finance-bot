@@ -1,5 +1,6 @@
-from DataBaseModel import Users, Wallets
+from DataBaseModel import Users, Wallets, Currencies
 from sqlalchemy.orm import Session
+
 from datetime import datetime, date, time, timedelta
 
 class UserHandler:
@@ -24,22 +25,19 @@ class UserHandler:
         self.__session__.add(user)
         self.__session__.commit()
 
-        wallet_rub_cash = Wallets(user.telegramm_id, name="Наличные рубли", currency="RUB", created_at= created_at)
-        wallet_usd_cash = Wallets(user.telegramm_id, name="Наличные доллары", currency="USD", created_at= created_at)
-        wallet_rub_card_sber = Wallets(user.telegramm_id, name = "Карта Сбер", currency="RUB", created_at= created_at)
+        list_all_currs = self.__session__.query(Currencies).all()
 
-        #self.__session__.add(user)
-        #self.__session__.commit()
+        list_of_wallets_cash = [Wallets(user.telegramm_id, f"Наличные {cur.name}", cur, created_at) for cur in list_all_currs]
+        list_of_wallets_cards = [Wallets(user.telegramm_id, f"Крадитна карта - {cur.name}", cur, created_at) for cur in list_all_currs]
 
-        #wallet_rub_cash.user_id = user
-        #wallet_usd_cash.user_id = user
-        #wallet_rub_card_sber.user_id = user
+        print(list_of_wallets_cards)
+        print(list_of_wallets_cash)
 
-        #self.__session__.add_all([wallet_rub_cash, wallet_usd_cash, wallet_rub_card_sber])
-        self.__session__.add(wallet_rub_cash)
-        self.__session__.add(wallet_usd_cash)
-        self.__session__.add(wallet_rub_card_sber)
-
+        # wallet_rub_cash = Wallets(user.telegramm_id, name="Наличные рубли", currency="RUB", created_at= created_at)
+        # wallet_usd_cash = Wallets(user.telegramm_id, name="Наличные доллары", currency="USD", created_at= created_at)
+        # wallet_rub_card_sber = Wallets(user.telegramm_id, name = "Карта Сбер", currency="RUB", created_at= created_at)
+        for wal in list_of_wallets_cards + list_of_wallets_cash:
+            self.__session__.add(wal, True)
         self.__session__.commit()
 
         return True
