@@ -16,9 +16,9 @@ class CurrenciesHandler:
 
     def __add_currencies__(self,  code: str, name:str, symbol:str) -> Currencies:
         not_exists = self.__session__.query(Currencies.code).filter_by(code=code).first() is None
-        print(not_exists)
+        #print(not_exists)
         if not_exists:
-            print(code)
+            #print(code)
             currencies = Currencies(code, name, symbol)
             self.__session__.add(currencies)
             self.__session__.commit()
@@ -46,3 +46,6 @@ class CurrenciesHandler:
     def get_curreny_by_code(self, code:str):
         if code == "USD":
             return self.__session__.query(Currencies).filter(Currencies.id == Currencies.id).all()
+
+
+
