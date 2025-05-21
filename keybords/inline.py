@@ -4,11 +4,12 @@ from telebot import types
 
 def go_to_menu():
     markup = types.InlineKeyboardMarkup(row_width=1)
-    command1 = types.InlineKeyboardButton('1. Добавить доход ♻️', callback_data='add income')
-    command2 = types.InlineKeyboardButton('2. Добавить расходы 🪫', callback_data='B')
-    command3 = types.InlineKeyboardButton('3. Моя Статистика 📈', callback_data='C')
-    command4 = types.InlineKeyboardButton('4. Мой баланс 💰', callback_data='D')
-    markup.add(command1, command2, command3, command4)
+    command1 = types.InlineKeyboardButton('1. Доходы 💵', callback_data='add income')
+    command2 = types.InlineKeyboardButton('2. Расходы 🪫', callback_data='expenses')
+    command3 = types.InlineKeyboardButton('3. Сбережения 💰', callback_data='savings')
+    command4 = types.InlineKeyboardButton('4. Цель 🎯', callback_data='purpos')
+    command5 = types.InlineKeyboardButton("5. Опиание 🖼 ",callback_data="description")
+    markup.add(command1, command2, command3, command4,command5)
     return markup
 
 # Клавиатура - "выбор временного промежутка"
