@@ -29,6 +29,8 @@ def answer_inc(call:CallbackQuery):
 
 
 
+
+
 # Обработчик 1.Рубли.
 # ______________________________________________________________________________________________________________________
 
@@ -92,6 +94,13 @@ def answer_inc(call:CallbackQuery):
                                    '/set_category <название> [тип] — добавить новую категорию (тип = income или expense, по умолчанию expense)  \n'
                                    '/remove_category <название> — удалить существующую категорию', reply_markup=markup,
                               parse_mode='Markdown')
+
+
+    elif call.data == "expenses":
+        markup = keybords.categories_of_expenses()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберете расход:',reply_markup=markup)
+
 
 # Добавдление RUS RUB базу данных.
 # ______________________________________________________________________________________________________________________
