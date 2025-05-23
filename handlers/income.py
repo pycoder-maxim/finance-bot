@@ -187,6 +187,8 @@ def add_db_euro(messege:Message):
                                        name=name,
                                        code=code)
     """
+
+    #Смоьтри сюда
     markup = keybords.go_to_menu()
     bot.send_message(messege.chat.id, f'Доход добавлен:{amount} {symbol}', reply_markup=markup)
 
