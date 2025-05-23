@@ -11,6 +11,9 @@ class WalletHandler:
     def get_wallets_by_user_id(self, user_id:int):
         return self.__session__.query(Wallets).filter(Wallets.user_id == user_id).all()
 
+    def get_wallets_by_user_id_and_cur_id(self, user_id:int, cur_id:int) -> Wallets:
+        return self.__session__.query(Wallets).filter(Wallets.user_id == user_id, Wallets.currency_id == cur_id).all()
+
     def update_wallet(self, telegram_id: int, name: str = None, currency: str = None) -> bool:
         # TODO - доделать правильную логику
         user = self.__session__.query(Users).filter(Users.telegramm_id == telegram_id).first()

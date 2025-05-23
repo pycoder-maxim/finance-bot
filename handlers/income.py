@@ -15,49 +15,31 @@ income_amounts = {}  # user_id -> сумма
 @bot.callback_query_handler(func=lambda call: True)
 def answer_inc(call:CallbackQuery):
     if call.data == 'add_income':
-
-        wallets = db_api.wallets().get_wallets_by_user_id(call.from_user.id)
-        str = ""
-        for wallet in wallets:
-            str += wallet.name + " " + wallet.currency.name + " " + wallet.value.__str__() + "\n"
-
         markup = keybords.currency_account_selection()
-
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                  text='Выберите валюту:' + str, reply_markup=markup)
-
-
-
-
-
-
-# Обработчик 1.Рубли.
-# ______________________________________________________________________________________________________________________
-
-    elif call.data == 'entering_amount_RUB':
+                                  text='Выберите валюту:', reply_markup=markup)
+        # Обработчик 1.Рубли.
+        # ______________________________________________________________________________________________________________________
+    elif call.data == 'entering_wallett_RUB':
+        markup = keybords.create_wallets_markup(call.from_user.id, "RUB")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Введите сумму в RUB:')
+                              text='Выберете счет для зачисления:', reply_markup=markup)
         bot.register_next_step_handler(call.message, add_db_rub)
-
-# Обработчик 2.Доллары.
-# ______________________________________________________________________________________________________________________
-
+        # Обработчик 2.Доллары.
+        # ______________________________________________________________________________________________________________________
     elif call.data == 'entering_amount_USDT':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму в USD:')
         bot.register_next_step_handler(call.message, add_db_usd)
-
-# Обработчик 3.Евро.
-# ______________________________________________________________________________________________________________________
+        # Обработчик 3.Евро.
+        # ______________________________________________________________________________________________________________________
 
     elif call.data == 'entering_amount_EUR':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите сумму в EUR:')
         bot.register_next_step_handler(call.message, add_db_euro)
-
-# Обработчик 4.Вернуться назад.
-# ______________________________________________________________________________________________________________________
-
+        # Обработчик 4.Вернуться назад.
+        # ______________________________________________________________________________________________________________________
     elif call.data == "go_to_back_menu":
         markup = keybords.go_to_menu()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
@@ -75,9 +57,8 @@ def answer_inc(call:CallbackQuery):
                                    '/remove_category <название> — удалить существующую категорию', reply_markup=markup,
                               parse_mode='Markdown')
 
-# Обработчик(Главное меню)5.Описание.
-# ______________________________________________________________________________________________________________________
-
+        # Обработчик(Главное меню)5.Описание.
+        # ______________________________________________________________________________________________________________________
     elif call.data == "description":
         markup = keybords.go_to_menu()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
@@ -95,25 +76,21 @@ def answer_inc(call:CallbackQuery):
                                    '/remove_category <название> — удалить существующую категорию', reply_markup=markup,
                               parse_mode='Markdown')
 
-
     elif call.data == "expenses":
         markup = keybords.categories_of_expenses()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете расход:',reply_markup=markup)
 
-
 # Добавдление RUS RUB базу данных.
 # ______________________________________________________________________________________________________________________
-
-
     #Транзакции(transactions)
 def add_db_rub(messege:Message):
     user_id = messege.from_user.id
-    currency_id = id(Currencies)
-    wallet_id = id(Wallets)
-    amount = float(messege.text)
+    currency:Currencies = db_api.currencies().get_curreny_by_code("RUB")
+    wallet:Wallets = db_api.wallets().get_wallets_by_user_id_and_cur_id(messege.from_user.id, currency.id)[1]
+    amount = float(messege.text) #TODO - вставить проверку на то, что messege.text - число
     category = 'income'
-    db_api.transactions().add_transaction(user_id=user_id,currency_id=currency_id,wallet_id=wallet_id,
+    db_api.transactions().add_transaction(user_id=user_id,currency_id=currency.id,wallet_id=wallet.id,
                                           amount=amount,
                                           category=category,
                                           report="",
@@ -136,7 +113,6 @@ def add_db_rub(messege:Message):
 
 # Добавдление USD базу данных.
 # ______________________________________________________________________________________________________________________
-
     #Транзакции(transactions)
 def add_db_usd(messege:Message):
     user_id = messege.from_user.id
