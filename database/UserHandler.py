@@ -1,4 +1,4 @@
-from DataBaseModel import Users, Wallets, Currencies
+from DataBaseModel import Users, Wallets, Currencies,Categories
 from sqlalchemy.orm import Session
 
 from datetime import datetime, date, time, timedelta
@@ -32,6 +32,17 @@ class UserHandler:
 
         print(list_of_wallets_cards)
         print(list_of_wallets_cash)
+
+        list_all_cat = self.__session__.query(Categories).all()
+
+        categories_of_expenses = [Categories(user.telegramm_id,"Категории расходов",)]
+        categories_of_icomes = [Categories(user.telegramm_id,"Категории доходов",)]
+
+
+
+
+
+
 
         # wallet_rub_cash = Wallets(user.telegramm_id, name="Наличные рубли", currency="RUB", created_at= created_at)
         # wallet_usd_cash = Wallets(user.telegramm_id, name="Наличные доллары", currency="USD", created_at= created_at)
