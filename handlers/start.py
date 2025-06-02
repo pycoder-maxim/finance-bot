@@ -11,10 +11,10 @@ def main(messege: Message, state: StateContext):
     state.set(MyStates.menu_state)
     markup = keybords.go_to_menu()
     bot.send_message(messege.chat.id,
-                     'Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help')
-    db_api.users().add_user(messege.from_user.id, messege.from_user.first_name, messege.from_user.last_name,
-                            messege.from_user.username, datetime.now().__str__(),
+                     'Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help',
                             reply_markup=markup)
+    db_api.users().add_user(messege.from_user.id, messege.from_user.first_name, messege.from_user.last_name,
+                            messege.from_user.username, datetime.now().__str__())
 
 
 @bot.message_handler(commands=['help'])
