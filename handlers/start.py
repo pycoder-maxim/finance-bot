@@ -1,16 +1,20 @@
 from telebot.types import Message
 from datetime import datetime
 from loader import bot, db_api
+from telebot.states.sync.context import StateContext
 import keybords
-
+from states import MyStates
 
 
 @bot.message_handler(commands=['start'])
-def main(messege: Message):
+def main(messege: Message, state: StateContext):
+    state.set(MyStates.menu_state)
+    markup = keybords.go_to_menu()
     bot.send_message(messege.chat.id,
                      'Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help')
     db_api.users().add_user(messege.from_user.id, messege.from_user.first_name, messege.from_user.last_name,
-                            messege.from_user.username, datetime.now().__str__())
+                            messege.from_user.username, datetime.now().__str__(),
+                            reply_markup=markup)
 
 
 @bot.message_handler(commands=['help'])
