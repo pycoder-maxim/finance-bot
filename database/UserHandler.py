@@ -1,7 +1,10 @@
 from DataBaseModel import Users, Wallets, Currencies,Categories
 from sqlalchemy.orm import Session
+from database import CategoryHandler
 
 from datetime import datetime, date, time, timedelta
+
+
 
 class UserHandler:
     def __init__(self, session: Session):
@@ -30,23 +33,30 @@ class UserHandler:
         list_of_wallets_cash = [Wallets(user.telegramm_id, f"Наличные {cur.name}", cur, created_at) for cur in list_all_currs]
         list_of_wallets_cards = [Wallets(user.telegramm_id, f"Крадитна карта - {cur.name}", cur, created_at) for cur in list_all_currs]
 
-        print(list_of_wallets_cards)
-        print(list_of_wallets_cash)
+        #доходы
+        for income in CategoryHandler.categories_of_icomes:
+            category = Categories(name=income, ctype="income", created_at=created_at)
+            category.user_id = telegram_id
+            self.__session__.add(category)
 
-        list_all_cat = self.__session__.query(Categories).all()
+        # расходы
+        for expense in CategoryHandler.categories_of_expenses:
+            category = Categories(name=expense, ctype="expense", created_at=created_at)
+            category.user_id = telegram_id
+            self.__session__.add(category)
 
-        categories_of_expenses = [Categories(user.telegramm_id,"Категории расходов",)]
-        categories_of_icomes = [Categories(user.telegramm_id,"Категории доходов",)]
+        # сбережения
+        for savings in CategoryHandler.categories_of_savings:
+            category = Categories(name=savings, ctype="savings", created_at=created_at)
+            category.user_id = telegram_id
+            self.__session__.add(category)
 
+        # цели
+        for goals in CategoryHandler.categories_of_goals:
+            category = Categories(name=goals, ctype="goals", created_at=created_at)
+            category.user_id = telegram_id
+            self.__session__.add(category)
 
-
-
-
-
-
-        # wallet_rub_cash = Wallets(user.telegramm_id, name="Наличные рубли", currency="RUB", created_at= created_at)
-        # wallet_usd_cash = Wallets(user.telegramm_id, name="Наличные доллары", currency="USD", created_at= created_at)
-        # wallet_rub_card_sber = Wallets(user.telegramm_id, name = "Карта Сбер", currency="RUB", created_at= created_at)
         for wal in list_of_wallets_cards + list_of_wallets_cash:
             self.__session__.add(wal, True)
         self.__session__.commit()

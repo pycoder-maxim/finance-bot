@@ -55,7 +55,7 @@ class Categories(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     ctype = Column(String)  # сокрещение от category type
-                            # возможные значения - "income" "expense" "savings" "goal"
+                            # возможные значения - "income" "expense" "savings" "goals"
     created_at = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("Users",back_populates='categories')
