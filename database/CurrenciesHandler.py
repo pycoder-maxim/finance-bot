@@ -46,5 +46,6 @@ class CurrenciesHandler:
     def get_curreny_by_code(self, code:str):
             return self.__session__.query(Currencies).filter(Currencies.code == code).first()
 
-
+    def get_curreny_by_id(self, id: str):
+        return self.__session__.query(Currencies).filter(Currencies.id == id).first()
 

@@ -21,6 +21,9 @@ class CategoryHandler:
     def get_categories_by_user_id(self, user_id: int) -> list[Categories]:
         return self.__session__.query(Categories).filter(Categories.user_id == user_id).all()
 
+    def get_categories_by_id(self, id: int) -> list[Categories]:
+        return self.__session__.query(Categories).filter(Categories.id == id).first()
+
     def get_categories_by_tg_id_and_ctype(self, user_id:int, cat_type:str) -> list[Categories]:
         return self.__session__.query(Categories).filter(Categories.user_id == user_id, Categories.ctype == cat_type).all()
 

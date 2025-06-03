@@ -21,11 +21,11 @@ def go_to_menu():
 #______________________________________________________________________________________________________________________
 def currency_account_selection():
     markup = types.InlineKeyboardMarkup(row_width=1)
-    command1 = types.InlineKeyboardButton('1. Рубли RUB 🇷🇺', callback_data='entering_wallett_RUB')
-    command2 = types.InlineKeyboardButton('2. Доллыры USDT 🇺🇸', callback_data='entering_amount_USDT')
-    command3 = types.InlineKeyboardButton('3. Евро EUR 🇪🇺 ', callback_data='entering_amount_EUR')
-    command4 = types.InlineKeyboardButton('4. Вернуться назад 🔙 ', callback_data='go_back_to_menu')
-    markup.add(command1, command2, command3,command4)
+    currencies_list:list[Currencies] = db_api.currencies().get_all_currencies()
+    buttons = [types.InlineKeyboardButton(cur.name + " " + cur.symbol, callback_data="curr_id:" + cur.id.__str__()) for cur in currencies_list]
+    markup.add(*buttons)
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
+    markup.add(command4)
     return markup
 
 
@@ -47,6 +47,8 @@ def create_wallets_markup(useer_id:int, cur_code:str):
     wallets = db_api.wallets().get_wallets_by_user_id_and_cur_id(useer_id, currency.id)
     buttons = [types.InlineKeyboardButton(wallet.name, callback_data="wall_id:"+wallet.id.__str__()) for wallet in wallets]
     markup.add(*buttons)
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
+    markup.add(command4)
     return markup
 
 #______________________________________________________________________________________________________________________
@@ -56,4 +58,19 @@ def create_categories_keyboard(list_of_cats:list[Categories]):
     markup.add(*categories_buttons)
     command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_to_menu')
     markup.add(command4)
+    return markup
+
+#______________________________________________________________________________________________________________________
+def create_go_back_state_button_markup():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_to_menu')
+    markup.add(command4)
+    return markup
+
+#______________________________________________________________________________________________________________________
+def create_comment_transaction_state_markup():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command3 = types.InlineKeyboardButton('▶️Продолжить без комментария ▶️', callback_data='without_comment')
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
+    markup.add(command3, command4)
     return markup

@@ -11,6 +11,9 @@ class WalletHandler:
     def get_wallets_by_user_id(self, user_id:int):
         return self.__session__.query(Wallets).filter(Wallets.user_id == user_id).all()
 
+    def get_wallets_by_id(self, id:int):
+        return self.__session__.query(Wallets).filter(Wallets.id == id).first()
+
     def get_wallets_by_user_id_and_cur_id(self, user_id:int, cur_id:int) -> Wallets:
         return self.__session__.query(Wallets).filter(Wallets.user_id == user_id, Wallets.currency_id == cur_id).all()
 
