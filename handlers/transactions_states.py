@@ -198,6 +198,7 @@ def ask_amount_transation(message: types.Message, state: StateContext):
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                               text='Введите комментарий к транзакции или продолжите без него, нажав на кнопку "Продолжить без комментария":',
                               reply_markup=markup)
+        """
         user_id = message.from_user.id
         currency: Currencies = db_api.currencies().get_curreny_by_code("RUB")
         wallet: Wallets = db_api.wallets().get_wallets_by_user_id_and_cur_id(message.from_user.id, currency.id)[1]
@@ -208,4 +209,17 @@ def ask_amount_transation(message: types.Message, state: StateContext):
                                               category=category,
                                               report="",
                                               date=datetime.datetime.now().__str__())
-
+        """
+"""
+@bot.callback_query_handler(func=lambda call: True, state=MyStates.menu_state)
+def menu_handler(call: CallbackQuery, state: StateContext):
+    if call.data.startswith("add"):
+        _, aim = call.data.split("_")
+        state.set(MyStates.finish_state)
+        state.add_data(**{"type": aim})
+        list_of_transactions= db_api.transactions().get_Transactions_by_user_id(call.from_user.id, aim)
+        markup = keybords.create_categories_keyboard(list_of_transactions)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text=f'Выберите соответствующую категорию {message_word_second_state.get(aim)}:',
+                              reply_markup=markup)
+"""
