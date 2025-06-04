@@ -31,43 +31,33 @@ class MyStates(StatesGroup):
 
 transaction_type = {"income":"доход",
                    "expense": "расход",
+                   "savings": "сбережения",
+                   "goals": "цель"
+                   }
+
+second_state = {"income":MyStates.income_type_state,
+                   "expense": MyStates.expend_type_state,
+                   "savings": MyStates.saving_types_state,
+                   "goals": MyStates.goals_types_state
+                   }
+
+message_word_second_state = {"income":"дохода",
+                   "expense": "расхода",
                    "saving": "сбережения",
-                   "goal": "цель"
+                   "goals": "цели"
                    }
 
 
 # Handler for name input
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.menu_state)
 def menu_handler(call:CallbackQuery, state: StateContext):
-    if call.data == 'add_income':
-        state.set(MyStates.income_type_state)
-        state.add_data(**{"type": "income"})
-        list_of_income_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, "income")
-        markup = keybords.create_categories_keyboard(list_of_income_categories)
+    if call.data.startswith("add"):
+        _, aim = call.data.split("_")
+        state.set(second_state.get(aim))
+        list_of_categories =db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, aim)
+        markup = keybords.create_categories_keyboard(list_of_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберите категорию дохода:', reply_markup=markup)
-    elif call.data =='add_expenses':
-        state.set(MyStates.expend_type_state)
-        state.add_data(**{"type": "expense"})
-        list_of_income_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, "expense")
-        markup = keybords.create_categories_keyboard(list_of_income_categories)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберите категорию расхода:', reply_markup=markup)
-    elif call.data =='add_savings':
-        state.set(MyStates.saving_types_state)
-        state.add_data(**{"type": "saving"})
-        list_of_income_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, "savings")
-        markup = keybords.create_categories_keyboard(list_of_income_categories)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберите категорию накопления:', reply_markup=markup)
-    elif call.data =='add_purpose':
-        state.set(MyStates.goals_types_state)
-        state.add_data(**{"type": "goal"})
-        list_of_income_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, "goals")
-        markup = keybords.create_categories_keyboard(list_of_income_categories)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберите категорию цели:', reply_markup=markup)
-
+                              text=f'Выберите соответствующую категорию {message_word_second_state.get(aim)}:', reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.income_type_state)
