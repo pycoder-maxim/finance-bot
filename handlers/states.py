@@ -4,6 +4,7 @@ from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
 from telebot.storage import StateMemoryStorage
 from telebot.types import ReplyParameters
+import datetime
 
 from database.build.lib.DataBaseModel import Currencies, Categories, Wallets
 from loader import bot, state_storage, db_api
@@ -197,3 +198,14 @@ def ask_amount_transation(message: types.Message, state: StateContext):
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                               text='Введите комментарий к транзакции или продолжите без него, нажав на кнопку "Продолжить без комментария":',
                               reply_markup=markup)
+        user_id = message.from_user.id
+        currency: Currencies = db_api.currencies().get_curreny_by_code("RUB")
+        wallet: Wallets = db_api.wallets().get_wallets_by_user_id_and_cur_id(message.from_user.id, currency.id)[1]
+        category = 'income'
+        amount = float(message.text)
+        db_api.transactions().add_transaction(user_id=user_id, currency_id=currency.id, wallet_id=wallet.id,
+                                              amount=amount,
+                                              category=category,
+                                              report="",
+                                              date=datetime.datetime.now().__str__())
+
