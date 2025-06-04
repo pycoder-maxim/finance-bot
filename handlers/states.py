@@ -15,11 +15,7 @@ class MyStates(StatesGroup):
     hello_state = State()
     menu_state = State()
 
-    income_type_state = State()
-    expend_type_state = State()
-    saving_types_state = State()
-    goals_types_state = State()
-
+    category_choice = State()
     currency_choice = State()
     aocount_choice = State()
 
@@ -35,12 +31,6 @@ transaction_type = {"income":"доход",
                    "goals": "цель"
                    }
 
-second_state = {"income":MyStates.income_type_state,
-                   "expense": MyStates.expend_type_state,
-                   "savings": MyStates.saving_types_state,
-                   "goals": MyStates.goals_types_state
-                   }
-
 message_word_second_state = {"income":"дохода",
                    "expense": "расхода",
                    "saving": "сбережения",
@@ -53,14 +43,15 @@ message_word_second_state = {"income":"дохода",
 def menu_handler(call:CallbackQuery, state: StateContext):
     if call.data.startswith("add"):
         _, aim = call.data.split("_")
-        state.set(second_state.get(aim))
+        state.set(MyStates.category_choice)
+        state.add_data(**{"type":aim})
         list_of_categories =db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, aim)
         markup = keybords.create_categories_keyboard(list_of_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text=f'Выберите соответствующую категорию {message_word_second_state.get(aim)}:', reply_markup=markup)
 
 
-@bot.callback_query_handler(func=lambda call: True, state=MyStates.income_type_state)
+@bot.callback_query_handler(func=lambda call: True, state=MyStates.category_choice)
 def name_get(call:CallbackQuery, state: StateContext):
     if call.data == 'go_back_to_menu':
         state.set(MyStates.menu_state)
@@ -83,7 +74,7 @@ def name_get(call:CallbackQuery, state: StateContext):
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.currency_choice)
 def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
     if call.data == 'go_back_state':
-        state.set(MyStates.income_type_state)
+        state.set(MyStates.category_choice)
         list_of_income_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, "income")
         markup = keybords.create_categories_keyboard(list_of_income_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
@@ -206,34 +197,3 @@ def ask_amount_transation(message: types.Message, state: StateContext):
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                               text='Введите комментарий к транзакции или продолжите без него, нажав на кнопку "Продолжить без комментария":',
                               reply_markup=markup)
-
-
-@bot.callback_query_handler(func=lambda call: True, state=MyStates.expend_type_state)
-def name_get(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_to_menu':
-        state.set(MyStates.menu_state)
-        markup = keybords.go_to_menu()
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Основное меню:\n Чтобы узнать доступные команды, введите /help',
-                              reply_markup=markup)
-    return
-
-@bot.callback_query_handler(func=lambda call: True, state=MyStates.saving_types_state)
-def name_get(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_to_menu':
-        state.set(MyStates.menu_state)
-        markup = keybords.go_to_menu()
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Основное меню:\n Чтобы узнать доступные команды, введите /help',
-                              reply_markup=markup)
-    return
-
-@bot.callback_query_handler(func=lambda call: True, state=MyStates.goals_types_state)
-def name_get(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_to_menu':
-        state.set(MyStates.menu_state)
-        markup = keybords.go_to_menu()
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Основное меню:\n Чтобы узнать доступные команды, введите /help',
-                              reply_markup=markup)
-    return
