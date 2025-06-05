@@ -210,9 +210,9 @@ def ask_amount_transation(message: types.Message, state: StateContext):
                                               report="",
                                               date=datetime.datetime.now().__str__())
         """
-"""
+
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.menu_state)
-def menu_handler(call: CallbackQuery, state: StateContext):
+def add_db_api(call: CallbackQuery, state: StateContext):
     if call.data.startswith("add"):
         _, aim = call.data.split("_")
         state.set(MyStates.finish_state)
@@ -222,4 +222,4 @@ def menu_handler(call: CallbackQuery, state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text=f'Выберите соответствующую категорию {message_word_second_state.get(aim)}:',
                               reply_markup=markup)
-"""
+
