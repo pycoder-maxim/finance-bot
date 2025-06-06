@@ -185,14 +185,13 @@ class Transactions(Base):
     currency = relationship("Currencies")
 
     def __init__(self, user_id: int, name: str, report_data: str, created_at: str,
-                 amount: float = 0, ttype: str = None, currency_id: int = None,
+                 amount: float = 0,  currency_id: int = None,
                  wallet_id: int = None, category_id: int = None):
         self.name = name
         self.report_data = report_data
         self.created_at = created_at
         self.user_id = user_id
         self.amount = amount
-        self.ttype = ttype
         self.currency_id = currency_id
         self.wallet_id = wallet_id
         self.category_id = category_id

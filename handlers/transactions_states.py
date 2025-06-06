@@ -163,7 +163,17 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
             cat_id = data.get("cat_id")
             cur_id = data.get("cur_id")
             wall_id = data.get("wall_id")
+            name = data.get("type")
+            report_data = data.get("comment")
+            created_at = datetime.time
             amount = data.get("amount")
+            date = datetime.time
+            currency_id = data.get("cur_id")
+            wallet_id = data.get("wall_id")
+            category_id = data.get("cat_id")
+            chat_id = data.get("chat_id_1")
+            message_id = data.get("message_id")
+
             cat:Categories = db_api.categories().get_categories_by_id(cat_id)
             curr:Currencies = db_api.currencies().get_curreny_by_id(cur_id)
             wallet:Wallets = db_api.wallets().get_wallets_by_id(wall_id)
@@ -179,13 +189,18 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
             )
             print(msg)
             bot.send_message(call.message.chat.id,msg, parse_mode="html")
+            db_api.transactions().add_transaction(call.from_user.id, name, report_data, created_at, amount, date,
+                                                  currency_id, wallet_id, category_id)
+            bot.edit_message_text(chat_id=chat_id, message_id=message_id,
+                                  text='Доход добавлен'
+                                  )
     return
 
 
 @bot.message_handler(state=MyStates.input_comment_state)
-def ask_amount_transation(message: types.Message, state: StateContext):
+def input_ask_comment(message: types.Message, state: StateContext):
     state.set(MyStates.input_comment_state)
-    state.add_data(**{"amount":int(message.text)})
+    state.add_data(**{"comment":int(message.text)})
     try:
         bot.delete_message(message.chat.id, message.id)
     except Exception as err:
@@ -199,25 +214,30 @@ def ask_amount_transation(message: types.Message, state: StateContext):
                               text='Введите комментарий к транзакции или продолжите без него, нажав на кнопку "Продолжить без комментария":',
                               reply_markup=markup)
 
-        """
-        user_id = message.from_user.id
-        currency: Currencies = db_api.currencies().get_curreny_by_code("RUB")
-        wallet: Wallets = db_api.wallets().get_wallets_by_user_id_and_cur_id(message.from_user.id, currency.id)[1]
-        category = 'income'
-        amount = float(message.text)
-        db_api.transactions().add_transaction(user_id=user_id, currency_id=currency.id, wallet_id=wallet.id,
-                                              amount=amount,
-                                              category=category,
-                                              report="",
-                                              date=datetime.datetime.now().__str__())
-        """
 
-@bot.callback_query_handler(func=lambda call: True, state=MyStates.finish_state)
-def add_db_api(call: CallbackQuery, state: StateContext):
-        state.set(MyStates.finish_state)
-        list_of_transactions= db_api.transactions().add_transaction(call.from_user.id)
-        markup = keybords.create_categories_keyboard(list_of_transactions)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text=f'Выберите соответствующую категорию {message_word_second_state}:',
-                              reply_markup=markup)
+
+@bot.message_handler(func=lambda call: True, state=MyStates.finish_state)
+def add_db_api(message: types.Message, state: StateContext):
+    state.set(MyStates.finish_state)
+    try:
+        bot.delete_message(message.chat.id, message.id)
+    except Exception as err:
+        print(err)
+        with state.data() as data:
+            name = data.get("type")
+            report_data = data.get("comment")
+            created_at = datetime.time
+            amount = data.get("amount")
+            date = datetime.time
+            currency_id = data.get("cur_id")
+            wallet_id = data.get("wall_id")
+            category_id = data.get("cat_id")
+            chat_id = data.get("chat_id_1")
+            message_id = data.get("message_id")
+
+            db_api.transactions().add_transaction(message.from_user.id,name,report_data,created_at,amount,date,currency_id,wallet_id,category_id)
+            bot.edit_message_text(chat_id=chat_id, message_id=message_id,
+                                  text='Доход добавлен'
+                                  )
+
 
