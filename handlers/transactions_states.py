@@ -171,8 +171,7 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
             currency_id = data.get("cur_id")
             wallet_id = data.get("wall_id")
             category_id = data.get("cat_id")
-            chat_id = data.get("chat_id_1")
-            message_id = data.get("message_id")
+
 
             cat:Categories = db_api.categories().get_categories_by_id(cat_id)
             curr:Currencies = db_api.currencies().get_curreny_by_id(cur_id)
@@ -191,9 +190,7 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
             bot.send_message(call.message.chat.id,msg, parse_mode="html")
             db_api.transactions().add_transaction(call.from_user.id, name, report_data, created_at, amount, date,
                                                   currency_id, wallet_id, category_id)
-            bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                  text='Доход добавлен'
-                                  )
+
     return
 
 
