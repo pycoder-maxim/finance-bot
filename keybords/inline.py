@@ -71,6 +71,6 @@ def create_go_back_state_button_markup():
 def create_comment_transaction_state_markup():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command3 = types.InlineKeyboardButton('▶️Продолжить без комментария ▶️', callback_data='without_comment')
-    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state_to')
     markup.add(command3, command4)
     return markup

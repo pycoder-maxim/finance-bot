@@ -74,7 +74,7 @@ def name_get(call:CallbackQuery, state: StateContext):
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.currency_choice)
 def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_state':
+    if call.data == 'go_back_state_to':
         state.set(MyStates.category_choice)
         list_of_income_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, "income")
         markup = keybords.create_categories_keyboard(list_of_income_categories)
@@ -95,7 +95,7 @@ def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.aocount_choice)
 def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_state':
+    if call.data == 'go_back_state_to':
         state.set(MyStates.currency_choice)
         markup = keybords.currency_account_selection()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
@@ -117,7 +117,7 @@ def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.input_amount_state)
 def input_amount_state_back(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_state':
+    if call.data == 'go_back_state_to':
         state.set(MyStates.aocount_choice)
         with state.data() as data:
             cur_id = data.get("cur_id")
