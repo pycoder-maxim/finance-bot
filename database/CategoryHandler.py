@@ -37,7 +37,6 @@ class CategoryHandler:
         self.__session__.commit()
         return True
 
-
     def delete_category(self, category_id: int) -> bool:
         category = self.__session__.query(Categories).get(category_id)
         if not category:
