@@ -13,6 +13,7 @@ from telebot.types import Message, CallbackQuery
 
 # Define states
 class MyStates(StatesGroup):
+    hello_state = State()
     menu_state = State()
 
     category_choice = State()
@@ -75,7 +76,6 @@ def name_get(call:CallbackQuery, state: StateContext):
 def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
     if call.data == 'go_back_state_to':
         state.set(MyStates.category_choice)
-        #TODO - поправить правильное возвращение назад
         list_of_income_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, "income")
         markup = keybords.create_categories_keyboard(list_of_income_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
@@ -132,7 +132,7 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
 @bot.message_handler(state=MyStates.input_amount_state, is_digit=True)
 def ask_amount_transation(message: types.Message, state: StateContext):
     state.set(MyStates.input_comment_state)
-    state.add_data(**{"amount":float(message.text)})
+    state.add_data(**{"amount":int(message.text)})
     try:
         bot.delete_message(message.chat.id, message.id)
     except Exception as err:
@@ -145,6 +145,7 @@ def ask_amount_transation(message: types.Message, state: StateContext):
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                               text='Введите комментарий к транзакции или продолжите без него, нажав на кнопку "Продолжить без комментария":',
                               reply_markup=markup)
+
 
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.input_comment_state)
@@ -164,16 +165,20 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
             cur_id = data.get("cur_id")
             wall_id = data.get("wall_id")
             name = data.get("type")
-            report_data = ""
-            created_at = datetime.datetime.now().__str__()
+            report_data = data.get("comment")
+            created_at = datetime.time
             amount = data.get("amount")
+            date = datetime.time
+            currency_id = data.get("cur_id")
+            wallet_id = data.get("wall_id")
+            category_id = data.get("cat_id")
+
 
             cat:Categories = db_api.categories().get_categories_by_id(cat_id)
             curr:Currencies = db_api.currencies().get_curreny_by_id(cur_id)
             wallet:Wallets = db_api.wallets().get_wallets_by_id(wall_id)
             trans_type_rus = transaction_type.get(type)
-            db_api.transactions().add_transaction(call.from_user.id, name, report_data, created_at, amount,
-                                                  curr.id, wallet.id, cat.id)
+            print(trans_type_rus, cat_id, cur_id, wall_id, amount, cat.name, curr.name, wallet.name)
             msg = (
                 f"Thank you for sharing! Here is a summary of your information:\n"
                 f"Тип Транзакции - {trans_type_rus}\n"
@@ -182,8 +187,10 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
                 f"Счет для транзакции - {wallet.name}\n"
                 f"Колличество - {amount}"
             )
+            print(msg)
             bot.send_message(call.message.chat.id,msg, parse_mode="html")
-
+            db_api.transactions().add_transaction(call.from_user.id, name, report_data, created_at, amount, date,
+                                                  currency_id, wallet_id, category_id)
 
     return
 
@@ -191,19 +198,45 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
 @bot.message_handler(state=MyStates.input_comment_state)
 def input_ask_comment(message: types.Message, state: StateContext):
     state.set(MyStates.input_comment_state)
-    state.add_data(**{"comment":int(message.text)})
+    state.add_data(**{"comment":str(message.text)})
     try:
         bot.delete_message(message.chat.id, message.id)
     except Exception as err:
         print(err)
 
-    markup = keybords.create_comment_transaction_state_markup()
+    state.set(MyStates.finish_state)
     with state.data() as data:
-        chat_id = data.get("chat_id_1")
-        message_id = data.get("message_id")
-        bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                              text='Введите комментарий к транзакции или продолжите без него, нажав на кнопку "Продолжить без комментария":',
-                              reply_markup=markup)
+        type = data.get("type")
+        cat_id = data.get("cat_id")
+        cur_id = data.get("cur_id")
+        wall_id = data.get("wall_id")
+        name = data.get("type")
+        report_data = data.get("comment")
+        created_at = datetime.time
+        amount = data.get("amount")
+        date = datetime.time
+        currency_id = data.get("cur_id")
+        wallet_id = data.get("wall_id")
+        category_id = data.get("cat_id")
+
+        cat: Categories = db_api.categories().get_categories_by_id(cat_id)
+        curr: Currencies = db_api.currencies().get_curreny_by_id(cur_id)
+        wallet: Wallets = db_api.wallets().get_wallets_by_id(wall_id)
+        trans_type_rus = transaction_type.get(type)
+        print(trans_type_rus, cat_id, cur_id, wall_id, amount, cat.name, curr.name, wallet.name)
+        msg = (
+            f"Thank you for sharing! Here is a summary of your information:\n"
+            f"Тип Транзакции - {trans_type_rus}\n"
+            f"Категория - {cat.name}\n"
+            f"Валюта - {curr.name}\n"
+            f"Счет для транзакции - {wallet.name}\n"
+            f"Колличество - {amount}"
+        )
+        print(msg)
+        bot.send_message(message.chat.id, msg, parse_mode="html")
+        db_api.transactions().add_transaction(message.from_user.id, name, report_data, created_at, amount, date,
+                                              currency_id, wallet_id, category_id)
+
 
 
 
