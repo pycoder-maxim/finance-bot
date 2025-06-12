@@ -1,3 +1,4 @@
+import decimal
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Integer, String, Boolean, DECIMAL, BigInteger,MetaData
 from sqlalchemy.orm import declarative_base
@@ -170,11 +171,10 @@ class Reports(Base):
 class Transactions(Base):
     __tablename__ = 'transactions'
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    #report_data = Column(String)
+    name = Column(String)     #ttype
+    report_data = Column(String)
     created_at = Column(String)
     amount = Column(DECIMAL(32, 2))
-    #ttype = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
     currency_id = Column(Integer, ForeignKey('currencies.id'))
     wallet_id = Column(Integer, ForeignKey('wallets.id'))
@@ -185,13 +185,13 @@ class Transactions(Base):
     currency = relationship("Currencies")
 
     def __init__(self, user_id: int, name: str, report_data: str, created_at: str,
-                 amount: float = 0,  currency_id: int = None,
+                 amount: float,  currency_id: int = None,
                  wallet_id: int = None, category_id: int = None):
         self.name = name
         self.report_data = report_data
         self.created_at = created_at
         self.user_id = user_id
-        self.amount = amount
+        self.amount = decimal.Decimal(amount)
         self.currency_id = currency_id
         self.wallet_id = wallet_id
         self.category_id = category_id

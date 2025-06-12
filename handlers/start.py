@@ -3,7 +3,7 @@ from datetime import datetime
 from loader import bot, db_api
 from telebot.states.sync.context import StateContext
 import keybords
-from states import MyStates
+from transactions_states import MyStates
 
 
 @bot.message_handler(commands=['start'])
