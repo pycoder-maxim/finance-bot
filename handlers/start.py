@@ -25,40 +25,9 @@ def start(m):
                      f"Select {LSTEP[step]}",
                      reply_markup=calendar)
 
-@bot.callback_query_handler(func=DetailedTelegramCalendar.func())
+@bot.callback_query_handler(func=lambda call: True, state="*")
 def cal(c):
-    result, key, step = DetailedTelegramCalendar().process(c.data)
-    if not result and key:
-        bot.edit_message_text(f"Select {LSTEP[step]}",
-                              c.message.chat.id,
-                              c.message.message_id,
-                              reply_markup=key)
-    elif result:
-        bot.edit_message_text(f"You selected {result}",
-                              c.message.chat.id,
-                              c.message.message_id)
-
-class MyStyleCalendar(DetailedTelegramCalendar):
-    # previous and next buttons style. they are emoji now!
-    prev_button = "⬅️"
-    next_button = "➡️"
-    # you do not want empty cells when month and year are being selected
-    empty_month_button = ""
-    empty_year_button = ""
-
-
-your_translation_months = list('abcdefghijkl')
-your_translation_days_of_week = list('yourtra')
-
-class MyTranslationCalendar(DetailedTelegramCalendar):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.days_of_week['yourtransl'] = your_translation_days_of_week
-        self.months['yourtransl'] = your_translation_months
-
-
-@bot.callback_query_handler(func=DetailedTelegramCalendar.func())
-def cal(c):
+    print("yes")
     result, key, step = DetailedTelegramCalendar().process(c.data)
     if not result and key:
         bot.edit_message_text(f"Select {LSTEP[step]}",
@@ -72,7 +41,7 @@ def cal(c):
 
 
 
-@bot.message_handler(commands=['help'])
+@bot.message_handler(commands=['help'], state="*")
 def info(messege):
     markup = keybords.go_to_menu()
 
