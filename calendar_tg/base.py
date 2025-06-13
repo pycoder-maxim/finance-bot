@@ -1,4 +1,4 @@
-import calendar_tg
+import calendar
 import json
 import random
 from datetime import date
@@ -14,7 +14,7 @@ except ImportError:
 
 from calendar_tg.static import MONTHS, DAYS_OF_WEEK
 
-calendar_tg.setfirstweekday(calendar_tg.MONDAY)
+calendar.setfirstweekday(calendar.MONDAY)
 
 CB_CALENDAR = "cbcal"
 
@@ -30,8 +30,8 @@ LSTEP = {'y': 'year', 'm': 'month', 'd': 'day'}
 class TelegramCalendar:
     months = MONTHS
     days_of_week = DAYS_OF_WEEK
-    prev_button = "<<"
-    next_button = ">>"
+    prev_button = "⬅️"
+    next_button = "➡️"
     middle_button_day = "{month} {year}"
     middle_button_month = "{year}"
     middle_button_year = " "
@@ -195,7 +195,7 @@ def max_date(d, step):
     if step == YEAR:
         return d.replace(month=12, day=31)
     elif step == MONTH:
-        return d.replace(day=calendar_tg.monthrange(d.year, d.month)[1])
+        return d.replace(day=calendar.monthrange(d.year, d.month)[1])
     else:
         return d
 

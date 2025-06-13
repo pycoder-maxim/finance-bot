@@ -4,7 +4,7 @@ from loader import bot, db_api
 from telebot.states.sync.context import StateContext
 import keybords
 from transactions_states import MyStates
-
+from calendar_tg import DetailedTelegramCalendar, LSTEP
 
 @bot.message_handler(commands=['start'])
 def main(messege: Message, state: StateContext):
@@ -15,6 +15,61 @@ def main(messege: Message, state: StateContext):
                             reply_markup=markup)
     db_api.users().add_user(messege.from_user.id, messege.from_user.first_name, messege.from_user.last_name,
                             messege.from_user.username, datetime.now().__str__())
+
+
+
+@bot.message_handler(commands=['calendar'])
+def start(m):
+    calendar, step = DetailedTelegramCalendar().build()
+    bot.send_message(m.chat.id,
+                     f"Select {LSTEP[step]}",
+                     reply_markup=calendar)
+
+@bot.callback_query_handler(func=DetailedTelegramCalendar.func())
+def cal(c):
+    result, key, step = DetailedTelegramCalendar().process(c.data)
+    if not result and key:
+        bot.edit_message_text(f"Select {LSTEP[step]}",
+                              c.message.chat.id,
+                              c.message.message_id,
+                              reply_markup=key)
+    elif result:
+        bot.edit_message_text(f"You selected {result}",
+                              c.message.chat.id,
+                              c.message.message_id)
+
+class MyStyleCalendar(DetailedTelegramCalendar):
+    # previous and next buttons style. they are emoji now!
+    prev_button = "⬅️"
+    next_button = "➡️"
+    # you do not want empty cells when month and year are being selected
+    empty_month_button = ""
+    empty_year_button = ""
+
+
+your_translation_months = list('abcdefghijkl')
+your_translation_days_of_week = list('yourtra')
+
+class MyTranslationCalendar(DetailedTelegramCalendar):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.days_of_week['yourtransl'] = your_translation_days_of_week
+        self.months['yourtransl'] = your_translation_months
+
+
+@bot.callback_query_handler(func=DetailedTelegramCalendar.func())
+def cal(c):
+    result, key, step = DetailedTelegramCalendar().process(c.data)
+    if not result and key:
+        bot.edit_message_text(f"Select {LSTEP[step]}",
+                              c.message.chat.id,
+                              c.message.message_id,
+                              reply_markup=key)
+    elif result:
+        bot.edit_message_text(f"You selected {result}",
+                              c.message.chat.id,
+                              c.message.message_id)
+
 
 
 @bot.message_handler(commands=['help'])
@@ -36,7 +91,13 @@ def info(messege):
                      "/remove_category <название> — удалить существующую категорию",
                      reply_markup=markup,
                      parse_mode='Markdown')
-
+class MyStyleCalendar(DetailedTelegramCalendar):
+    # previous and next buttons style. they are emoji now!
+    prev_button = "⬅️"
+    next_button = "➡️"
+    # you do not want empty cells when month and year are being selected
+    empty_month_button = ""
+    empty_year_button = ""
 
 
 
