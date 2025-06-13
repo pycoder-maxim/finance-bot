@@ -73,7 +73,7 @@ def name_get(call:CallbackQuery, state: StateContext):
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.currency_choice)
 def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_state_to':
+    if call.data == 'go_back_state':
         state.set(MyStates.category_choice)
         #TODO - поправить правильное возвращение назад
         list_of_income_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, "income")
@@ -95,7 +95,7 @@ def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.aocount_choice)
 def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_state_to':
+    if call.data == 'go_back_state':
         state.set(MyStates.currency_choice)
         markup = keybords.currency_account_selection()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
@@ -117,7 +117,7 @@ def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.input_amount_state)
 def input_amount_state_back(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_state_to':
+    if call.data == 'go_back_state':
         state.set(MyStates.aocount_choice)
         with state.data() as data:
             cur_id = data.get("cur_id")
@@ -191,19 +191,40 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
 @bot.message_handler(state=MyStates.input_comment_state)
 def input_ask_comment(message: types.Message, state: StateContext):
     state.set(MyStates.input_comment_state)
-    state.add_data(**{"comment":int(message.text)})
+    state.add_data(**{"comment":str(message.text)})
     try:
         bot.delete_message(message.chat.id, message.id)
     except Exception as err:
         print(err)
-
-    markup = keybords.create_comment_transaction_state_markup()
+    state.set(MyStates.finish_state)
     with state.data() as data:
-        chat_id = data.get("chat_id_1")
-        message_id = data.get("message_id")
-        bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                              text='Введите комментарий к транзакции или продолжите без него, нажав на кнопку "Продолжить без комментария":',
-                              reply_markup=markup)
+        type = data.get("type")
+        cat_id = data.get("cat_id")
+        cur_id = data.get("cur_id")
+        wall_id = data.get("wall_id")
+        name = data.get("type")
+        report_data = data.get("comment")
+        created_at = datetime.datetime.now().__str__()
+        amount = data.get("amount")
+
+        cat: Categories = db_api.categories().get_categories_by_id(cat_id)
+        curr: Currencies = db_api.currencies().get_curreny_by_id(cur_id)
+        wallet: Wallets = db_api.wallets().get_wallets_by_id(wall_id)
+        trans_type_rus = transaction_type.get(type)
+        db_api.transactions().add_transaction(message.from_user.id, name, report_data, created_at, amount,
+                                              curr.id, wallet.id, cat.id)
+        msg = (
+            f"Thank you for sharing! Here is a summary of your information:\n"
+            f"Тип Транзакции - {trans_type_rus}\n"
+            f"Категория - {cat.name}\n"
+            f"Валюта - {curr.name}\n"
+            f"Счет для транзакции - {wallet.name}\n"
+            f"Колличество - {amount}\n"
+            f"Комментарий - {report_data}\n"
+        )
+        bot.send_message(message.chat.id, msg, parse_mode="html")
+
+
 
 
 

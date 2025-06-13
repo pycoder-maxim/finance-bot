@@ -55,14 +55,14 @@ def create_categories_keyboard(list_of_cats:list[Categories]):
     markup = types.InlineKeyboardMarkup(row_width=1)
     categories_buttons = [types.InlineKeyboardButton(cat.name, callback_data="cat_id:"+cat.id.__str__()) for cat in list_of_cats]
     markup.add(*categories_buttons)
-    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_to_menu')
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
     markup.add(command4)
     return markup
 
 #______________________________________________________________________________________________________________________
 def create_go_back_state_button_markup():
     markup = types.InlineKeyboardMarkup(row_width=1)
-    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_to_menu')
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
     markup.add(command4)
     return markup
 
@@ -70,6 +70,6 @@ def create_go_back_state_button_markup():
 def create_comment_transaction_state_markup():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command3 = types.InlineKeyboardButton('▶️Продолжить без комментария ▶️', callback_data='without_comment')
-    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state_to')
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
     markup.add(command3, command4)
     return markup
