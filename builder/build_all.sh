@@ -6,3 +6,4 @@ source ../venv/bin/activate
 ./venv/bin/python3 -m pip install ../database/
 ./venv/bin/python3 -m pip install ../keybords/
 ./venv/bin/python3 -m pip install ../handlers/
+./venv/bin/python3 -m pip install ../calendar_tg/

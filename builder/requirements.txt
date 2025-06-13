@@ -1,2 +1,3 @@
 sqlalchemy
 pyTelegramBotAPI
+python-dateutil~=2.8.1
