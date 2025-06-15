@@ -25,7 +25,7 @@ def start(m):
                      f"Select {LSTEP[step]}",
                      reply_markup=calendar)
 
-@bot.callback_query_handler(func=lambda call: True, state="*")
+@bot.callback_query_handler(func=lambda call: True)
 def cal(c):
     print("yes")
     result, key, step = DetailedTelegramCalendar().process(c.data)
