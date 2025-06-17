@@ -60,16 +60,49 @@ def create_categories_keyboard(list_of_cats:list[Categories]):
     return markup
 
 #______________________________________________________________________________________________________________________
-def create_go_back_state_button_markup():
+def create_accounts_buttons_markup(amount = None):
     markup = types.InlineKeyboardMarkup(row_width=1)
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
+    markup.add(command4)
+    if amount is not None:
+        command5 = types.InlineKeyboardButton(f'Оставить {amount} ', callback_data='set_amount')
+        markup.add(command5)
+    return markup
+
+#______________________________________________________________________________________________________________________
+def create_comment_transaction_state_markup(comment = None):
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command3 = types.InlineKeyboardButton('▶️Продолжить без комментария ▶️', callback_data='without_comment')
+    markup.add(command3)
+    if comment is not None:
+        command3_5 = types.InlineKeyboardButton('▶️Оставить прежний ▶️', callback_data='set_comment')
+        markup.add(command3_5)
     command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
     markup.add(command4)
     return markup
 
 #______________________________________________________________________________________________________________________
-def create_comment_transaction_state_markup():
+def create_finish_transaction_state_markup():
     markup = types.InlineKeyboardMarkup(row_width=1)
-    command3 = types.InlineKeyboardButton('▶️Продолжить без комментария ▶️', callback_data='without_comment')
-    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
-    markup.add(command3, command4)
+    command1 = types.InlineKeyboardButton('🔄 Изменить тип операции', callback_data='fin_type')
+    command2 = types.InlineKeyboardButton('🗂 Изменить тип категории', callback_data='fin_cat')
+    command3 = types.InlineKeyboardButton('💱 Изменить валюту операции', callback_data='fin_cur')
+    command4 = types.InlineKeyboardButton('💳 Изменить счет операции', callback_data='fin_wall')
+    command5 = types.InlineKeyboardButton('🔢 Изменить введенное число', callback_data='fin_amount')
+    command6 = types.InlineKeyboardButton('💬 Изменить комментарий', callback_data='fin_comment')
+    command7 = types.InlineKeyboardButton('✅ Готово', callback_data='fin_ok')
+
+    markup.add(command1, command2, command3, command4, command5, command6, command7)
     return markup
+
+"""
+        type = data.get("type")
+        cat_id = data.get("cat_id")
+        cur_id = data.get("cur_id")
+        wall_id = data.get("wall_id")
+        name = data.get("type")
+        report_data = data.get("comment")
+        created_at = datetime.datetime.now().__str__()
+        amount = data.get("amount")
+"""
+
