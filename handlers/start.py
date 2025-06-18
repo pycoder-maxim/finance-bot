@@ -41,6 +41,8 @@ def cal(c):
 
 
 
+
+
 @bot.message_handler(commands=['help'], state="*")
 def info(messege):
     markup = keybords.go_to_menu()
@@ -60,13 +62,7 @@ def info(messege):
                      "/remove_category <название> — удалить существующую категорию",
                      reply_markup=markup,
                      parse_mode='Markdown')
-class MyStyleCalendar(DetailedTelegramCalendar):
-    # previous and next buttons style. they are emoji now!
-    prev_button = "⬅️"
-    next_button = "➡️"
-    # you do not want empty cells when month and year are being selected
-    empty_month_button = ""
-    empty_year_button = ""
+
 
 
 

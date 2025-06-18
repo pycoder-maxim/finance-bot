@@ -64,7 +64,7 @@ def menu_handler(call:CallbackQuery, state: StateContext):
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.category_choice)
 def name_get(call:CallbackQuery, state: StateContext):
-    if call.data == 'go_back_to_menu':
+    if call.data == 'go_back_state':
         state.set(MyStates.menu_state)
         markup = keybords.go_to_menu()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
@@ -86,7 +86,6 @@ def name_get(call:CallbackQuery, state: StateContext):
 def currency_choice_callback_get(call:CallbackQuery, state: StateContext):
     if call.data == 'go_back_state':
         state.set(MyStates.category_choice)
-        #TODO - поправить правильное возвращение назад
         list_of_income_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, "income")
         markup = keybords.create_categories_keyboard(list_of_income_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
