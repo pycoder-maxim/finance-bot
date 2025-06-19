@@ -15,6 +15,7 @@ from telebot.types import Message, CallbackQuery
 class MyStates(StatesGroup):
     menu_state = State()
 
+    change_category = State()
     category_choice = State()
     currency_choice = State()
     aocount_choice = State()
@@ -60,6 +61,25 @@ def menu_handler(call:CallbackQuery, state: StateContext):
         markup = keybords.create_categories_keyboard(list_of_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text=f'Выберите соответствующую категорию {message_word_second_state.get(aim)}:', reply_markup=markup)
+
+    elif call.data == 'new_category':
+        state.set(MyStates.change_category)
+        markup = keybords.add_categories()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Добавить/Удалить ',
+                              reply_markup=markup)
+    return
+
+@bot.callback_query_handler(func=lambda call: True, state=MyStates.change_category)
+def change_category_handler(call:CallbackQuery, state: StateContext):
+    if call.data == 'add_new_category':
+        state.set(MyStates.change_category)
+        markup = keybords.add_categories()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Категория добавленна',
+                              reply_markup=markup)
+    return
+
 
 
 @bot.callback_query_handler(func=lambda call: True, state=MyStates.category_choice)
@@ -506,3 +526,8 @@ def input_ask_comment(message: types.Message, state: StateContext):
                               message_id=message_id,
                               text=msg,
                               reply_markup=keybords.create_finish_transaction_state_markup())
+
+#@bot.callback_query_handler(func=lambda call: True, state=MyStates.change_state)
+
+
+

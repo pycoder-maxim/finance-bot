@@ -27,6 +27,16 @@ def currency_account_selection():
     markup.add(command4)
     return markup
 
+def add_categories():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. Добавить новую категорию ', callback_data='add_new_category')
+    command2 = types.InlineKeyboardButton('1. Удалить существующуую категорию  ', callback_data='delete_category')
+    markup.add(command1,command2)
+    return markup
+
+
+
+
 
 # Клавиатура - "Категорий расходов."
 #______________________________________________________________________________________________________________________
@@ -56,7 +66,8 @@ def create_categories_keyboard(list_of_cats:list[Categories]):
     categories_buttons = [types.InlineKeyboardButton(cat.name, callback_data="cat_id:"+cat.id.__str__()) for cat in list_of_cats]
     markup.add(*categories_buttons)
     command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
-    markup.add(command4)
+    command5 = types.InlineKeyboardButton(' Добавить категорию + ', callback_data='new_category')
+    markup.add(command4,command5)
     return markup
 
 #______________________________________________________________________________________________________________________

@@ -5,6 +5,8 @@ from telebot.states.sync.context import StateContext
 import keybords
 from transactions_states import MyStates
 from calendar_tg import DetailedTelegramCalendar, LSTEP
+from datetime import date
+
 
 @bot.message_handler(commands=['start'])
 def main(messege: Message, state: StateContext):
@@ -17,7 +19,7 @@ def main(messege: Message, state: StateContext):
                             messege.from_user.username, datetime.now().__str__())
 
 
-
+'''
 @bot.message_handler(commands=['calendar'])
 def start(m):
     calendar, step = DetailedTelegramCalendar().build()
@@ -35,9 +37,35 @@ def cal(c):
                               c.message.message_id,
                               reply_markup=key)
     elif result:
+        bot.edit_message_text(f"Ваш выбор {result}",
+                              c.message.chat.id,
+                              c.message.message_id)
+
+'''
+
+
+@bot.message_handler(commands=['start1'])
+def start(m):
+    calendar, step = DetailedTelegramCalendar().build()
+    bot.send_message(m.chat.id,
+                     f"Select {LSTEP[step]}",
+                     reply_markup=calendar)
+
+
+@bot.callback_query_handler(func=DetailedTelegramCalendar.func())
+def cal(c):
+    result, key, step = DetailedTelegramCalendar().process(c.data)
+    if not result and key:
+        bot.edit_message_text(f"Select {LSTEP[step]}",
+                              c.message.chat.id,
+                              c.message.message_id,
+                              reply_markup=key)
+    elif result:
         bot.edit_message_text(f"You selected {result}",
                               c.message.chat.id,
                               c.message.message_id)
+
+
 
 
 
