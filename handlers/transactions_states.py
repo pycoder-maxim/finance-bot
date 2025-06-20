@@ -1,15 +1,12 @@
-import telebot
-from telebot import custom_filters, types
+from telebot import types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
-from telebot.storage import StateMemoryStorage
-from telebot.types import ReplyParameters
 import datetime
 
 from database.build.lib.DataBaseModel import Currencies, Categories, Wallets
-from loader import bot, state_storage, db_api
+from loader import bot, db_api
 import keybords
-from telebot.types import Message, CallbackQuery
+from telebot.types import CallbackQuery
 
 # Define states
 class MyStates(StatesGroup):
