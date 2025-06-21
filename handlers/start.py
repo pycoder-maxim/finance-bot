@@ -35,30 +35,27 @@ def change_comand(call:CallbackQuery,state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='#Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help',
                               reply_markup=markup)
+    else:
+        result, key, step = DetailedTelegramCalendar(locale='ru').process(call.data)
+        print(call.data)
+        if not result and key:
+            bot.edit_message_text(f"Выберете {LSTEP[step]}",
+                                  call.message.chat.id,
+                                  call.message.message_id,
+                                  reply_markup=key)
+        elif result:
+            bot.edit_message_text(f"Вы выбрали{result}",
+                                  call.message.chat.id,
+                                  call.message.message_id)
 
 
-
-
-@bot.message_handler(commands=['start1'])
+@bot.message_handler(commands=['calendar'])
 def start(m):
-    calendar, step = DetailedTelegramCalendar().build()
+    calendar, step = DetailedTelegramCalendar(locale='ru').build()
     bot.send_message(m.chat.id,
-                     f"Select {LSTEP[step]}",
+                     f"Выберете {LSTEP[step]}",
                      reply_markup=calendar)
 
-
-@bot.callback_query_handler(func=DetailedTelegramCalendar.func())
-def cal(c):
-    result, key, step = DetailedTelegramCalendar().process(c.data)
-    if not result and key:
-        bot.edit_message_text(f"Select {LSTEP[step]}",
-                              c.message.chat.id,
-                              c.message.message_id,
-                              reply_markup=key)
-    elif result:
-        bot.edit_message_text(f"You selected {result}",
-                              c.message.chat.id,
-                              c.message.message_id)
 
 
 @bot.message_handler(commands=['help'], state="*")
