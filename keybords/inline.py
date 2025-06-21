@@ -3,9 +3,19 @@ from loader import db_api
 from database import Currencies,Wallets, Categories
 
 
+
+# Клавиатура - "Состояние транзакций/Изменения категорий"
+#______________________________________________________________________________________________________________________
+def transaction_status_changing_categories():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. Состояние транзакций 📉', callback_data='transaction_status')
+    command2 = types.InlineKeyboardButton('2. Изменения категорий 📝', callback_data='changing_categories')
+    markup.add(command1, command2)
+    return markup
+
+
 #Клавиатура основного меню
 #______________________________________________________________________________________________________________________
-
 def go_to_menu():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command1 = types.InlineKeyboardButton('1. Доходы 💵', callback_data='add_income')

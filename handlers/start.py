@@ -4,19 +4,39 @@ from loader import bot, db_api
 from telebot.states.sync.context import StateContext
 import keybords
 from transactions_states import MyStates
+from categories_manipulation_states import CatStates
 from calendar_tg import DetailedTelegramCalendar, LSTEP
 from datetime import date
+from telebot.types import CallbackQuery
+
 
 
 @bot.message_handler(commands=['start'])
 def main(messege: Message, state: StateContext):
-    state.set(MyStates.menu_state)
-    markup = keybords.go_to_menu()
+    markup = keybords.transaction_status_changing_categories()
     bot.send_message(messege.chat.id,
-                     'Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help',
+                     'Выберете нужную команду',
                             reply_markup=markup)
     db_api.users().add_user(messege.from_user.id, messege.from_user.first_name, messege.from_user.last_name,
                             messege.from_user.username, datetime.now().__str__())
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def change_comand(call:CallbackQuery,state: StateContext):
+    if call.data == 'transaction_status':
+        state.set(MyStates.menu_state)
+        markup = keybords.go_to_menu()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='#Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help',
+                              reply_markup=markup)
+    elif call.data == 'changing_categories':
+        state.set(CatStates.category_state)
+        markup = keybords.go_to_menu()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='#Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help',
+                              reply_markup=markup)
+
+
 
 
 @bot.message_handler(commands=['start1'])
