@@ -44,8 +44,28 @@ def menu_cat_handler(call:CallbackQuery, state: StateContext):
                               reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.category_choice)
-def cat_get(call:CallbackQuery, state: StateContext):
-    pass
+def add_new_catgory(call:CallbackQuery, state: StateContext):
+    if call.data == 'new_category':
+        state.set(CatStates.currency_choice)
+        state.add_data(**{"category_choice": "cat_id"})
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Введите название новой категории:')
+
+@bot.message_handler(state=CatStates.currency_choice)
+def input_category(message: types.Message, state: StateContext):
+    try:
+        bot.delete_message(message.chat.id, message.id)
+        state.add_data(**{"change_state": "cat_id"})
+    except Exception as err:
+        print(err)
+        bot.edit_message_text(cat_id=cat_id,
+                              reply_markup=keybords.create_categories_keyboard())
+
+
+
+
+
+
 
 
 
