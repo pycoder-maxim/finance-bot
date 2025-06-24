@@ -30,6 +30,24 @@ message_word_second_state = {"income":"дохода",
                    "goals": "цели"
                    }
 
+transaction_type = {"income":"доход",
+                   "expense": "расход",
+                   "savings": "сбережения",
+                   "goals": "цель"
+                   }
+
+
+change_states_callbaks = ["cat", "cur", "wall", "amount", "comment"]
+
+change_state_messages ={
+    "cat"    :   "Выберете подходящую категорию",
+    "cur"    :   "Выберете подходяющу валюту операвци",
+    "wall"   :   "Выберете подходящий счет транзакции",
+    "amount" :   "Введите сумму транзакции",
+    "comment":   "Отправьте комметарий к транзакции",
+}
+
+
 
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.category_state)
 def menu_cat_handler(call:CallbackQuery, state: StateContext):
@@ -47,19 +65,33 @@ def menu_cat_handler(call:CallbackQuery, state: StateContext):
 def add_new_catgory(call:CallbackQuery, state: StateContext):
     if call.data == 'new_category':
         state.set(CatStates.currency_choice)
-        state.add_data(**{"category_choice": "cat_id"})
+
+
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Введите название новой категории:')
 
 @bot.message_handler(state=CatStates.currency_choice)
 def input_category(message: types.Message, state: StateContext):
-    try:
-        bot.delete_message(message.chat.id, message.id)
-        state.add_data(**{"change_state": "cat_id"})
-    except Exception as err:
-        print(err)
-        bot.edit_message_text(cat_id=cat_id,
-                              reply_markup=keybords.create_categories_keyboard())
+    state.add_data(**{"comment": str(message.text)})
+    bot.edit_message_text(chat_id=message.chat.id, message_id=message.message_id,
+                          text='Категория добавленна:')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -2,7 +2,7 @@ from telebot import types
 from loader import db_api
 from database import Currencies,Wallets, Categories
 
-
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # Клавиатура - "Состояние транзакций/Изменения категорий"
 #______________________________________________________________________________________________________________________
@@ -77,6 +77,8 @@ def create_categories_keyboard(list_of_cats:list[Categories]):
     markup.add(*categories_buttons)
     command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
     command5 = types.InlineKeyboardButton(' Добавить категорию + ', callback_data='new_category')
+    #button = types.InlineKeyboardButton(chat_id=call.message.chat.id)
+    #markup.add(button)
     markup.add(command4,command5)
     return markup
 
