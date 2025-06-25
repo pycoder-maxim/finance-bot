@@ -7,9 +7,9 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 def delete_change_the_name_create():
     markup = types.InlineKeyboardMarkup(row_width=1)
-    command1 = types.InlineKeyboardButton('1. Удалить категорию 📉', callback_data='transaction_status')
-    command2 = types.InlineKeyboardButton('2. Изменить имя категории 📝', callback_data='changing_categories')
-    command3 = types.InlineKeyboardButton('2. Создать категорию ', callback_data='changing_categories')
+    command1 = types.InlineKeyboardButton('1. Удалить категорию 📉', callback_data='delite_the_category')
+    command2 = types.InlineKeyboardButton('2. Изменить имя категории 📝', callback_data='change_the_category')
+    command3 = types.InlineKeyboardButton('2. Создать категорию ', callback_data='create_new_category')
     markup.add(command1, command2, command3)
     return markup
 

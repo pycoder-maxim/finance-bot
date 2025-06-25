@@ -14,8 +14,8 @@ class CatStates(StatesGroup):
 
     change_category = State()
     category_choice = State()
-    currency_choice = State()
-    aocount_choice = State()
+    delite_category = State()
+    create_category = State()
 
     input_amount_state = State()
     input_comment_state = State()
@@ -63,16 +63,26 @@ def menu_cat_handler(call:CallbackQuery, state: StateContext):
 
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.category_choice)
 def add_new_catgory(call:CallbackQuery, state: StateContext):
-    if call.data == 'new_category':
-        state.set(CatStates.currency_choice)
+    if call.data == 'delite_the_category':
+        state.set(CatStates.delite_category)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберите категорию которую хотите удалить:')
 
+    elif call.data == 'change_the_category':
+        state.set(CatStates.change_category)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберите категорию которую хотите изменить:')
 
+    elif call.data == 'create_new_category':
+        state.set(CatStates.create_category)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Введите название новой категории:')
 
 
 
-
+@bot.callback_query_handler(func=lambda call: True, state=CatStates.delite_category)
+def add_new_catgory(call:CallbackQuery, state: StateContext):
+    state.set(CatStates.delite_category)
 
 
 
