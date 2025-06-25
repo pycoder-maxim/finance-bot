@@ -56,9 +56,9 @@ def menu_cat_handler(call:CallbackQuery, state: StateContext):
         state.set(CatStates.category_choice)
         state.add_data(**{"type": aim})
         list_of_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, aim)
-        markup = keybords.create_categories_keyboard(list_of_categories)
+        markup = keybords.delete_change_the_name_create()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text=f'Выберите соответствующую категорию {message_word_second_state.get(aim)}:',
+                              text=f'Выберите: {message_word_second_state.get(aim)}:',
                               reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.category_choice)
@@ -70,11 +70,6 @@ def add_new_catgory(call:CallbackQuery, state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Введите название новой категории:')
 
-@bot.message_handler(state=CatStates.currency_choice)
-def input_category(message: types.Message, state: StateContext):
-    state.add_data(**{"comment": str(message.text)})
-    bot.edit_message_text(chat_id=message.chat.id, message_id=message.message_id,
-                          text='Категория добавленна:')
 
 
 

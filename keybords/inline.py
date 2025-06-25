@@ -4,6 +4,18 @@ from database import Currencies,Wallets, Categories
 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+
+def delete_change_the_name_create():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. Удалить категорию 📉', callback_data='transaction_status')
+    command2 = types.InlineKeyboardButton('2. Изменить имя категории 📝', callback_data='changing_categories')
+    command3 = types.InlineKeyboardButton('2. Создать категорию ', callback_data='changing_categories')
+    markup.add(command1, command2, command3)
+    return markup
+
+
+
+
 # Клавиатура - "Состояние транзакций/Изменения категорий"
 #______________________________________________________________________________________________________________________
 def transaction_status_changing_categories():
@@ -77,7 +89,7 @@ def create_categories_keyboard(list_of_cats:list[Categories]):
     markup.add(*categories_buttons)
     command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
     command5 = types.InlineKeyboardButton(' Добавить категорию + ', callback_data='new_category')
-    #button = types.InlineKeyboardButton(chat_id=call.message.chat.id)
+    #button = types.InlineKeyboardButton(chat_id=call.message.text)
     #markup.add(button)
     markup.add(command4,command5)
     return markup
