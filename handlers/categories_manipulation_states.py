@@ -89,8 +89,9 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
         state.set(CatStates.show_category_list)
         data, id = call.data.split(":")
         id = int(id)
+        #cat_id = data.get("cat_id")
         state.add_data(**{"cat_id": id})
-        list_of_categories = db_api.categories().delete_category(category_id=int)
+        list_of_categories = db_api.categories().delete_category(id)
         markup = keybords.create_categories_keyboard(list_of_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text=f'Категория удаленна: {message_word_second_state.get(aim)}:',
