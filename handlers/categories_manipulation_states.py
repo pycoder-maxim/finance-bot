@@ -17,7 +17,7 @@ class CatStates(StatesGroup):
     delite_category = State()
     create_category = State()
 
-    input_amount_state = State()
+    show_category_list = State()
     input_comment_state = State()
 
     finish_state = State()
@@ -51,22 +51,13 @@ change_state_messages ={
 
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.category_state)
 def menu_cat_handler(call:CallbackQuery, state: StateContext):
-    if call.data.startswith("add"):
-        _, aim = call.data.split("_")
-        state.set(CatStates.category_choice)
-        state.add_data(**{"type": aim})
-        list_of_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, aim)
-        markup = keybords.delete_change_the_name_create()
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text=f'Выберите: {message_word_second_state.get(aim)}:',
-                              reply_markup=markup)
-
-@bot.callback_query_handler(func=lambda call: True, state=CatStates.category_choice)
-def add_new_catgory(call:CallbackQuery, state: StateContext):
     if call.data == 'delite_the_category':
-        state.set(CatStates.delite_category)
+        markup = keybords.go_to_menu()
+        state.set(CatStates.category_choice)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                              text='Выберите категорию которую хотите удалить:')
+                              text='Выберите нужный раздел:',reply_markup=markup)
+
+
 
     elif call.data == 'change_the_category':
         state.set(CatStates.change_category)
@@ -79,10 +70,36 @@ def add_new_catgory(call:CallbackQuery, state: StateContext):
                               text='Введите название новой категории:')
 
 
+@bot.callback_query_handler(func=lambda call: True, state=CatStates.category_choice)
+def add_new_catgory(call:CallbackQuery, state: StateContext):
+    if call.data.startswith("add"):
+        _, aim = call.data.split("_")
+        state.set(CatStates.delite_category)
+        state.add_data(**{"type":aim})
+        list_of_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, aim)
+        markup = keybords.create_categories_keyboard(list_of_categories)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text=f'Выберите категорию которую хотите удалить: {message_word_second_state.get(aim)}:', reply_markup=markup)
+
 
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.delite_category)
-def add_new_catgory(call:CallbackQuery, state: StateContext):
-    state.set(CatStates.delite_category)
+def change_category_delite(call:CallbackQuery, state: StateContext):
+    if call.data.startswith("cat_id"):
+        _, aim = call.data.split("_")
+        state.set(CatStates.show_category_list)
+        data, id = call.data.split(":")
+        id = int(id)
+        state.add_data(**{"cat_id": id})
+        list_of_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id, aim)
+        markup = keybords.create_categories_keyboard(list_of_categories)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text=f'Категория удаленна: {message_word_second_state.get(aim)}:',
+                              reply_markup=markup)
+
+
+
+
+
 
 
 

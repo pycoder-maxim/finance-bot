@@ -29,11 +29,12 @@ def change_comand(call:CallbackQuery,state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='#Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help',
                               reply_markup=markup)
+
     elif call.data == 'changing_categories':
         state.set(CatStates.category_state)
-        markup = keybords.go_to_menu()
+        markup = keybords.delete_change_the_name_create()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='#Привет, …! Я помогу вести учёт доходов и расходов. Чтобы узнать доступные команды, введите /help',
+                              text='Выберете тип категории;',
                               reply_markup=markup)
     else:
         result, key, step = DetailedTelegramCalendar(locale='ru').process(call.data)
