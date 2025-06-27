@@ -16,6 +16,8 @@ class CatStates(StatesGroup):
     category_choice = State()
     delite_category = State()
     create_category = State()
+    input_new_category = State()
+    final_add_category = State()
 
     show_category_list = State()
     input_comment_state = State()
@@ -58,18 +60,50 @@ def menu_cat_handler(call:CallbackQuery, state: StateContext):
                               text='Выберите нужный раздел:',reply_markup=markup)
 
 
-
     elif call.data == 'change_the_category':
         state.set(CatStates.change_category)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Выберите категорию которую хотите изменить:')
 
     elif call.data == 'create_new_category':
+        markup = keybords.go_to_menu()
         state.set(CatStates.create_category)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберите нужный раздел:',reply_markup=markup)
+
+
+
+#create_new_category
+#_______________________________________________________________________________________________________________________
+@bot.callback_query_handler(func=lambda call: True, state=CatStates.create_category)
+def create_category(call:CallbackQuery, state: StateContext):
+    if call.data.startswith("add"):
+        _, aim = call.data.split("_")
+        state.add_data(**{"type":aim})
+        state.set(CatStates.input_new_category)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите название новой категории:')
 
 
+
+
+@bot.message_handler(state=CatStates.input_new_category)
+def ask_amount_transation(message: types.Message, state: StateContext):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#delite_the_category
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.category_choice)
 def add_new_catgory(call:CallbackQuery, state: StateContext):
     if call.data.startswith("add"):
