@@ -308,7 +308,7 @@ def finish_state_callback(call: CallbackQuery, state: StateContext):
             db_api.transactions().add_transaction(call.message.from_user.id, name, report_data, created_at, amount,
                                                   int(cur_id), int(wall_id), int(cat_id))
 
-            markup = keybords.go_to_menu()
+            markup = keybords.transaction_status_changing_categories()
             bot.edit_message_text(
                 chat_id=call.message.chat.id,
                 message_id=call.message.id,
@@ -316,8 +316,8 @@ def finish_state_callback(call: CallbackQuery, state: StateContext):
                 reply_markup=markup
             )
 
-            state.set(MyStates.menu_state)
-            return
+        state.delete()
+        return
     elif call.data.startswith("fin_"):
         _, aim_data = call.data.split("_")
         if aim_data == "type":

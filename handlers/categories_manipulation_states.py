@@ -111,6 +111,7 @@ def final_add_category(call: CallbackQuery, state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Выберите нужный раздел:', reply_markup=markup)
     elif call.data == 'chek_add':
+        state.delete()
         with state.data() as data:
             name = data.get("name")
             ctype = data.get("type")

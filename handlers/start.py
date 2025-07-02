@@ -13,6 +13,7 @@ from telebot.types import CallbackQuery
 
 @bot.message_handler(commands=['start'])
 def main(messege: Message, state: StateContext):
+    state.delete()
     markup = keybords.transaction_status_changing_categories()
     bot.send_message(messege.chat.id,
                      'Выберете нужную команду',
