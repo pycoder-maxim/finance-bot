@@ -81,25 +81,44 @@ def create_category(call:CallbackQuery, state: StateContext):
         _, aim = call.data.split("_")
         state.add_data(**{"type":aim})
         state.set(CatStates.input_new_category)
+        state.add_data(**{"message_id": call.message.id})
+        state.add_data(**{"chat_id_1": call.message.chat.id})
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите название новой категории:')
 
 
 
-
 @bot.message_handler(state=CatStates.input_new_category)
-def ask_amount_transation(message: types.Message, state: StateContext):
+def input_category_state(message: types.Message, state: StateContext):
+    try:
+        bot.delete_message(message.chat.id, message.id)
+    except Exception as err:
+        print(err)
+    state.add_data(**{"name": message.text})
+    with state.data() as data:
+        chat_id = data.get("chat_id_1")
+        message_id = data.get("message_id")
+        state.set(CatStates.final_add_category)
+        markup = keybords.add_category_chek()
+        bot.edit_message_text(chat_id=chat_id, message_id=message_id,
+                              text=f"Вы точно хотите добавить категорию: ({message.text}) ? ",reply_markup=markup)
 
-
-
-
-
-
-
-
-
-
-
+@bot.callback_query_handler(func=lambda call: True, state=CatStates.final_add_category)
+def final_add_category(call: CallbackQuery, state: StateContext):
+    if call.data == 'go_back_to_input_category':
+        state.set(CatStates.category_state)
+        markup = keybords.go_to_menu()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберите нужный раздел:', reply_markup=markup)
+    elif call.data == 'chek_add':
+        with state.data() as data:
+            name = data.get("name")
+            ctype = data.get("type")
+            created_at = datetime.datetime.now().__str__()
+            markup = keybords.transaction_status_changing_categories()
+            db_api.categories().create_category(name, ctype, created_at, call.from_user.id)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                                  text='Категория добавленна ✅:',reply_markup=markup)
 
 
 
@@ -124,12 +143,15 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
         data, id = call.data.split(":")
         id = int(id)
         #cat_id = data.get("cat_id")
-        state.add_data(**{"cat_id": id})
-        list_of_categories = db_api.categories().delete_category(id)
-        markup = keybords.create_categories_keyboard(list_of_categories)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text=f'Категория удаленна: {message_word_second_state.get(aim)}:',
-                              reply_markup=markup)
+        with state.data() as data:
+            type = data.get("type")
+            state.add_data(**{"cat_id": id})
+            db_api.categories().delete_category(id)
+            list_of_categories = db_api.categories().get_categories_by_tg_id_and_ctype(call.from_user.id,type)
+            markup = keybords.create_categories_keyboard(list_of_categories)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                                  text=f'Категория удаленна: {message_word_second_state.get(aim)}:',
+                                  reply_markup=markup)
 
 
 

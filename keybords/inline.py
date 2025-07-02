@@ -9,8 +9,16 @@ def delete_change_the_name_create():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command1 = types.InlineKeyboardButton('1. Удалить категорию 🗑', callback_data='delite_the_category')
     command2 = types.InlineKeyboardButton('2. Изменить имя категории 📌', callback_data='change_the_category')
-    command3 = types.InlineKeyboardButton('2. Создать категорию 👼', callback_data='create_new_category')
-    markup.add(command1, command2, command3)
+    command3 = types.InlineKeyboardButton('3. Создать категорию 👼', callback_data='create_new_category')
+    command4 = types.InlineKeyboardButton('4. Вернуться назад 🔙 ', callback_data='go_back_state_category')
+    markup.add(command1, command2, command3,command4)
+    return markup
+
+def add_category_chek():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. Дабавить категорию ', callback_data='chek_add')
+    command2 = types.InlineKeyboardButton('2. Вернуться назад 🔙 ', callback_data='go_back_to_input_category')
+    markup.add(command1,command2)
     return markup
 
 
