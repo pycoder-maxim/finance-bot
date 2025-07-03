@@ -29,7 +29,7 @@ class CategoryHandler:
 
     def update_category(self, category_id: int, **kwargs) -> bool:
         category = self.__session__.query(Categories).get(category_id)
-        if not category:
+        if not category: # что это за словарь?
             return False
         for key, value in kwargs.items():
             if hasattr(category, key):
