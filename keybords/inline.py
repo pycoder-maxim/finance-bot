@@ -23,6 +23,14 @@ def add_category_chek():
 
 
 
+def rename_category_chek():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. переименовать категорию  ', callback_data='rename_add')
+    command2 = types.InlineKeyboardButton('2. Вернуться назад 🔙 ', callback_data='go_back_to_input_category')
+    markup.add(command1,command2)
+    return markup
+
+
 
 # Клавиатура - "Состояние транзакций/Изменения категорий"
 #______________________________________________________________________________________________________________________
@@ -76,10 +84,13 @@ def create_wallets_markup(useer_id:int, cur_code:str):
     markup.add(command4)
     return markup
 
+
+
+
 #______________________________________________________________________________________________________________________
 def create_categories_keyboard(list_of_cats:list[Categories]):
     markup = types.InlineKeyboardMarkup(row_width=1)
-    categories_buttons = [types.InlineKeyboardButton(cat.name, callback_data="cat_id:"+cat.id.__str__()) for cat in list_of_cats]
+    categories_buttons = [types.InlineKeyboardButton(str(cat.name), callback_data="cat_id:"+cat.id.__str__()) for cat in list_of_cats]
     markup.add(*categories_buttons)
     command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
     markup.add(command4)
