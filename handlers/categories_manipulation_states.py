@@ -183,9 +183,9 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
         with state.data() as data:
             type = data.get("type")
             state.add_data(**{"cat_id": id})
-            db_api.categories().delete_category(id)
+            db_api.categories().update_category(id)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                  text=f'Категория удаленна, введите название новой категории: {message_word_second_state.get(aim)}:',reply_markup=markup)
+                                  text=f'Введите название новой категории: {message_word_second_state.get(aim)}:',reply_markup=markup)
 
 
 
@@ -213,7 +213,7 @@ def input_category_state(message: types.Message, state: StateContext):
         state.set(CatStates.final_add_category)
         markup = keybords.add_category_chek()
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                              text=f"Вы точно хотите добавить категорию: ({message.text}) ? ",reply_markup=markup)
+                              text=f"Новое название категории : ({message.text}) ? ",reply_markup=markup)
 
 
 
