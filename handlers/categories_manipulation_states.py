@@ -155,6 +155,10 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text=f'Категория удаленна: {message_word_second_state.get(aim)}:',
                                   reply_markup=markup)
+        state.delete()
+
+
+
 
 
 #change_category
@@ -180,43 +184,34 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
     if call.data.startswith("cat_id"):
         _, aim = call.data.split("_")
         data, id = call.data.split(":")
-        id = int(id)
         state.set(CatStates.change_category_step_3)
-        markup = keybords.rename_category_chek()
-        #cat_id = data.get("cat_id")
-        new_name = "Нижний новгород"
-        with state.data() as data:
-            type = data.get("type")
-            state.add_data(**{"cat_id": id})
-            db_api.categories().update_category(id,
-                name=new_name)
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                  text=f'Введите название новой категории: {message_word_second_state.get(aim)}:',reply_markup=markup)
-
-@bot.callback_query_handler(func=lambda call: True, state=CatStates.change_category_step_3)
-def rename_category(call:CallbackQuery, state: StateContext):
-    if call.data == 'rename_add':
-        state.set(CatStates.change_category_step_4)
+        state.add_data(**{"cat_id": id})
         state.add_data(**{"message_id": call.message.id})
         state.add_data(**{"chat_id_1": call.message.chat.id})
+
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Введите название новой категории:')
+                                  text=f'Введите название новой категории: ')
 
 
-@bot.message_handler(state=CatStates.change_category_step_4)
-def input_category_state(message: types.Message, state: StateContext):
-    try:
-        bot.delete_message(message.chat.id, message.id)
-    except Exception as err:
-        print(err)
+
+@bot.message_handler(state=CatStates.change_category_step_3)
+def process_new_name(message: types.Message, state: StateContext):
+    new_name = message.text
+
     state.add_data(**{"name": message.text})
+    state.set(CatStates.change_category_step_4)
+
+
     with state.data() as data:
         chat_id = data.get("chat_id_1")
         message_id = data.get("message_id")
-        state.set(CatStates.final_add_category)
-        markup = keybords.add_category_chek()
+        category_id = data['cat_id']
+        db_api.categories().update_category(category_id=category_id,
+        name=new_name)
+        markup = keybords.transaction_status_changing_categories()
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                              text=f"Новое название категории : ({message.text}) ? ",reply_markup=markup)
+                          text=f'Категория успешно переименованна ✅: ',reply_markup=markup)
+    state.delete()
 
 
 
