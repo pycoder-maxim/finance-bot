@@ -171,6 +171,10 @@ def add_new_catgory(call:CallbackQuery, state: StateContext):
                               text=f'Выберите категорию которую хотите переименовать: {message_word_second_state.get(aim)}:', reply_markup=markup)
 
 
+
+
+
+
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.change_category_step_2)
 def change_category_delite(call:CallbackQuery, state: StateContext):
     if call.data.startswith("cat_id"):
@@ -180,15 +184,14 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
         state.set(CatStates.change_category_step_3)
         markup = keybords.rename_category_chek()
         #cat_id = data.get("cat_id")
+        new_name = "Нижний новгород"
         with state.data() as data:
             type = data.get("type")
             state.add_data(**{"cat_id": id})
-            db_api.categories().update_category(id)
+            db_api.categories().update_category(id,
+                name=new_name)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text=f'Введите название новой категории: {message_word_second_state.get(aim)}:',reply_markup=markup)
-
-
-
 
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.change_category_step_3)
 def rename_category(call:CallbackQuery, state: StateContext):
