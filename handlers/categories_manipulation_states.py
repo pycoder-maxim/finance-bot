@@ -188,7 +188,6 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
         state.add_data(**{"cat_id": id})
         state.add_data(**{"message_id": call.message.id})
         state.add_data(**{"chat_id_1": call.message.chat.id})
-
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text=f'Введите название новой категории: ')
 
@@ -196,12 +195,14 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
 
 @bot.message_handler(state=CatStates.change_category_step_3)
 def process_new_name(message: types.Message, state: StateContext):
-    new_name = message.text
+    try:
+        bot.delete_message(message.chat.id, message.id)
+    except Exception as err:
+        print(err)
 
+    new_name = message.text
     state.add_data(**{"name": message.text})
     state.set(CatStates.change_category_step_4)
-
-
     with state.data() as data:
         chat_id = data.get("chat_id_1")
         message_id = data.get("message_id")
