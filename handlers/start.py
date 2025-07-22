@@ -8,7 +8,7 @@ from categories_manipulation_states import CatStates
 from calendar_tg import DetailedTelegramCalendar, LSTEP
 from datetime import date
 from telebot.types import CallbackQuery
-
+from wallets_manipulation import WallStates
 
 
 @bot.message_handler(commands=['start'])
@@ -37,6 +37,15 @@ def change_comand(call:CallbackQuery,state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете тип категории;',
                               reply_markup=markup)
+    elif call.data == 'changing_walets':
+        state.set(WallStates.wallets_state)
+        markup = keybords.delete_change_the_wallet_create()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберете кошелек;',
+                              reply_markup=markup)
+
+
+
     else:
         result, key, step = DetailedTelegramCalendar(locale='ru').process(call.data)
         print(call.data)

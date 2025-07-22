@@ -14,6 +14,19 @@ def delete_change_the_name_create():
     markup.add(command1, command2, command3,command4)
     return markup
 
+def delete_change_the_wallet_create():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. Удалить кошелек 🗑', callback_data='delite_the_wallet')
+    command2 = types.InlineKeyboardButton('2. Изменить имя кошелька 📌', callback_data='change_the_wallet')
+    command3 = types.InlineKeyboardButton('3. Создать кошелек 👼', callback_data='create_new_wallet')
+    command4 = types.InlineKeyboardButton('4. Вернуться назад 🔙 ', callback_data='go_back_state_wallet')
+    markup.add(command1, command2, command3,command4)
+    return markup
+
+
+
+
+
 def add_category_chek():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command1 = types.InlineKeyboardButton('1. Дабавить категорию ', callback_data='chek_add')
@@ -38,7 +51,8 @@ def transaction_status_changing_categories():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command1 = types.InlineKeyboardButton('1. Состояние транзакций 📉', callback_data='transaction_status')
     command2 = types.InlineKeyboardButton('2. Изменения категорий 📝', callback_data='changing_categories')
-    markup.add(command1, command2)
+    command3 = types.InlineKeyboardButton('2. Изменения пользовательских кошельков 💼', callback_data='changing_walets')
+    markup.add(command1, command2,command3)
     return markup
 
 
