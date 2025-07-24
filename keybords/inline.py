@@ -34,6 +34,13 @@ def add_category_chek():
     markup.add(command1,command2)
     return markup
 
+def add_waltet_chek():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. Добавить счет ', callback_data='chek_wallet_add')
+    command2 = types.InlineKeyboardButton('2. Вернуться назад 🔙 ', callback_data='go_back_to_input_category')
+    markup.add(command1,command2)
+    return markup
+
 
 
 def rename_category_chek():

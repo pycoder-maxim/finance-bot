@@ -5,8 +5,8 @@ class WalletHandler:
     def __init__(self, session:Session):
         self.__session__ = session
 
-    def create_wallet(self, name:str, currency:str, created_at:str, user_id:int):
-        return Wallets(name=name, currency=currency, created_at= created_at)
+    def create_wallet(self, name:str,  created_at:str, ):
+        return Wallets(name=name,  created_at= created_at)
 
     def get_wallets_by_user_id(self, user_id:int):
         return self.__session__.query(Wallets).filter(Wallets.user_id == user_id).all()
@@ -35,13 +35,10 @@ class WalletHandler:
         self.__session__.commit()
         return True
 
-    def delete_wallet(self, telegram_id: int, name: str, currency: str) -> bool:
-        user = self.__session__.query(Users).filter(Users.telegramm_id == telegram_id).first()
-        if not user:
-            return False  # Пользователь не найден
+    def delete_wallet(self, wall_id : int) -> bool:
         wallet = (
             self.__session__.query(Wallets)
-            .filter(Wallets.user_id == user.id, Wallets.name == name, Wallets.currency == currency)
+            .filter(Wallets.id == wall_id)
             .first()
         )
         if not wallet:
