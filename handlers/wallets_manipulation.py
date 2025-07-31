@@ -110,6 +110,7 @@ def final_add_wallet(call: CallbackQuery, state: StateContext):
             id = int(id)
             cur: Currencies = db_api.currencies().get_curreny_by_id(id)
             print('Саламалекум')
+            print("ghbdtn")
             created_at = datetime.datetime.now().__str__()
             markup = keybords.transaction_status_changing_categories()
             db_api.wallets().create_wallet(user_id=user_id,name=name,currency=cur,created_at=created_at)
