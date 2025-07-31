@@ -1,6 +1,3 @@
-
-
-
 from database import Currencies,Wallets, Categories
 from telebot import types
 from telebot.states import State, StatesGroup
@@ -11,6 +8,7 @@ from database.build.lib.DataBaseModel import Currencies, Categories, Wallets
 from loader import bot, db_api
 import keybords
 from telebot.types import CallbackQuery
+
 class WallStates(StatesGroup):
     wallets_state = State()
     change_walets = State()
@@ -107,10 +105,8 @@ def final_add_wallet(call: CallbackQuery, state: StateContext):
         with state.data() as data:
             user_id = call.from_user.id
             name = data.get("name")
-            id = int(id)
+            id = int(data.get("cur_id"))
             cur: Currencies = db_api.currencies().get_curreny_by_id(id)
-            print('Саламалекум')
-            print("ghbdtn")
             created_at = datetime.datetime.now().__str__()
             markup = keybords.transaction_status_changing_categories()
             db_api.wallets().create_wallet(user_id=user_id,name=name,currency=cur,created_at=created_at)
