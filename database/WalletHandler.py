@@ -1,12 +1,15 @@
 from DataBaseModel import Wallets, Users
 from sqlalchemy.orm import Session
-
+from DataBaseModel import Currencies
 class WalletHandler:
     def __init__(self, session:Session):
         self.__session__ = session
 
-    def create_wallet(self, name:str,  created_at:str, ):
-        return Wallets(name=name,  created_at= created_at)
+    def create_wallet(self, user_id: int,   name:str, currency:Currencies, created_at:str, ):
+        wallet = Wallets(user_id=user_id,   name=name, currency=currency,  created_at= created_at)
+        self.__session__.add(wallet)
+        self.__session__.commit()
+        return wallet
 
     def get_wallets_by_user_id(self, user_id:int):
         return self.__session__.query(Wallets).filter(Wallets.user_id == user_id).all()

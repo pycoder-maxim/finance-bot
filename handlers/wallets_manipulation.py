@@ -74,6 +74,8 @@ def create_wallet_id(call:CallbackQuery, state: StateContext):
     if call.data.startswith("curr_id"):
         state.set(WallStates.create_new_name_account)
         data,id = call.data.split(":")
+        id = int(id)
+        state.add_data(**{"cur_id": id})
         state.add_data(**{"message_id": call.message.id})
         state.add_data(**{"chat_id_1": call.message.chat.id})
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
@@ -103,10 +105,14 @@ def final_add_wallet(call: CallbackQuery, state: StateContext):
                               text='Выберите нужный раздел:', reply_markup=markup)
     elif call.data == 'chek_wallet_add':
         with state.data() as data:
+            user_id = call.from_user.id
             name = data.get("name")
+            id = int(id)
+            cur: Currencies = db_api.currencies().get_curreny_by_id(id)
+            print('Саламалекум')
             created_at = datetime.datetime.now().__str__()
             markup = keybords.transaction_status_changing_categories()
-            db_api.wallets().create_wallet(name=name,created_at=created_at)
+            db_api.wallets().create_wallet(user_id=user_id,name=name,currency=cur,created_at=created_at)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text='Счет добавлен ✅:',reply_markup=markup)
         state.delete()
