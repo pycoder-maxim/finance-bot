@@ -21,22 +21,20 @@ class WalletHandler:
         return self.__session__.query(Wallets).filter(Wallets.user_id == user_id, Wallets.currency_id == cur_id).all()
 
     def update_wallet(self, telegram_id: int, name: str = None, currency: str = None) -> bool:
-        # TODO - доделать правильную логику
-        user = self.__session__.query(Users).filter(Users.telegramm_id == telegram_id).first()
+        user = self.__session__.query(Users).filter(Users.telegram_id == telegram_id).first()
         if not user:
-            return False  # Пользователь не найден
+            return False
+        update_data = {}
+        if name is not None:
+            update_data['name'] = name
+        if currency is not None:
+            update_data['currency'] = currency
+        if update_data:
 
-        wallet = self.__session__.query(Wallets).filter(Wallets.user_id == user.id).first()
-        if not wallet:
-            return False  # Кошелек не найден
-
-        if name:
-            wallet.name = name
-        if currency:
-            wallet.currency = currency
-
-        self.__session__.commit()
-        return True
+            self.__session__.query(Wallets).filter(Wallets.user_id == user.id ).update(update_data)
+            self.__session__.commit()
+            return True
+        return False
 
     def delete_wallet(self, wall_id : int) -> bool:
         wallet = (

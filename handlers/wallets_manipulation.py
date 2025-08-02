@@ -17,6 +17,9 @@ class WallStates(StatesGroup):
     create_wallet = State()
     create_new_name_account = State()
     final_add_wallet = State()
+    rename_wallet = State()
+    input_new_wallet = State()
+    final_rename_wallet = State()
 
 
 
@@ -30,6 +33,11 @@ def menu_wall_handler(call:CallbackQuery, state: StateContext):
     elif call.data == 'create_new_wallet':
         markup = keybords.currency_account_selection()
         state.set(WallStates.create_wallet)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберите валюту:', reply_markup=markup)
+    elif call.data == 'change_the_wallet':
+        markup = keybords.currency_account_selection()
+        state.set(WallStates.rename_wallet)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Выберите валюту:', reply_markup=markup)
     return
@@ -113,3 +121,55 @@ def final_add_wallet(call: CallbackQuery, state: StateContext):
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text='Счет добавлен ✅:',reply_markup=markup)
         state.delete()
+
+#rename_acount
+#_______________________________________________________________________________________________________________________
+@bot.callback_query_handler(func=lambda call: True, state=WallStates.rename_wallet)
+def change_wallets_id(call:CallbackQuery, state: StateContext):
+    if call.data.startswith("curr_id"):
+        state.set(WallStates.input_new_wallet)
+        data,id = call.data.split(":")
+        id = int(id)
+        state.add_data(**{"cur_id":id})
+        cur:Currencies =db_api.currencies().get_curreny_by_id(id)
+        markup = keybords.create_wallets_markup(call.from_user.id, cur.code)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберете счет, который хотите переименовать',
+                              reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda call: True, state=WallStates.input_new_wallet)
+def change_category_delite(call:CallbackQuery, state: StateContext):
+    if call.data.startswith("wall_id"):
+        state.set(WallStates.final_rename_wallet)
+        data,id = call.data.split(":")
+        id = int(id)
+        state.add_data(**{"wall_id": id})
+        state.add_data(**{"cur_id": id})
+        state.add_data(**{"message_id": call.message.id})
+        state.add_data(**{"chat_id_1": call.message.chat.id})
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите название нового счета :')
+
+@bot.message_handler(state=WallStates.final_rename_wallet)
+def final_rename(message: types.Message, state: StateContext):
+    try:
+        bot.delete_message(message.chat.id, message.id)
+    except Exception as err:
+        print(err)
+    state.add_data(**{"name": message.text})
+    with state.data() as data:
+        chat_id = data.get("chat_id_1")
+        message_id = data.get("message_id")
+        id = int(data.get("cur_id"))
+        cur: Currencies = db_api.currencies().get_curreny_by_id(id)
+        new_name = message.text
+        state.set(WallStates.wallets_state)
+        db_api.wallets().update_wallet(telegram_id=message.from_user.id,currency=cur,name=new_name)
+        markup = keybords.transaction_status_changing_categories()
+        bot.edit_message_text(chat_id=chat_id, message_id=message_id,
+                              text=f"Счет переименован ✅",reply_markup=markup)
+    state.delete()
+
+
+
+

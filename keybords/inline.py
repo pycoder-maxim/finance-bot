@@ -58,7 +58,7 @@ def transaction_status_changing_categories():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command1 = types.InlineKeyboardButton('1. Состояние транзакций 📉', callback_data='transaction_status')
     command2 = types.InlineKeyboardButton('2. Изменения категорий 📝', callback_data='changing_categories')
-    command3 = types.InlineKeyboardButton('2. Изменения пользовательских кошельков 💼', callback_data='changing_walets')
+    command3 = types.InlineKeyboardButton('3. Изменения пользовательских кошельков 💼', callback_data='changing_walets')
     markup.add(command1, command2,command3)
     return markup
 
