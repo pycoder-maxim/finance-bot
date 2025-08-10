@@ -14,6 +14,7 @@ from wallets_manipulation import WallStates
 @bot.message_handler(commands=['start'])
 def main(messege: Message, state: StateContext):
     state.delete()
+    state.set(MyStates.start_choice)
     markup = keybords.transaction_status_changing_categories()
     bot.send_message(messege.chat.id,
                      'Выберете нужную команду',
@@ -35,14 +36,21 @@ def change_comand(call:CallbackQuery,state: StateContext):
         state.set(CatStates.category_state)
         markup = keybords.delete_change_the_name_create()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберете тип категории;',
+                              text='Выберете тип категории',
                               reply_markup=markup)
     elif call.data == 'changing_walets':
         state.set(WallStates.wallets_state)
         markup = keybords.delete_change_the_wallet_create()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберете кошелек;',
+                              text='Выберете что нужно изменить в ваших Кошельках',
                               reply_markup=markup)
+    elif call.data == 'go_back_state_wallet':
+        markup = keybords.transaction_status_changing_categories()
+        state.set(MyStates.start_choice)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберете нужную команду',
+                              reply_markup=markup)
+
 
 
 

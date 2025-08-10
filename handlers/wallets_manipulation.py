@@ -5,6 +5,7 @@ from telebot.states.sync.context import StateContext
 import datetime
 
 from database.build.lib.DataBaseModel import Currencies, Categories, Wallets
+from handlers.transactions_states import MyStates
 from loader import bot, db_api
 import keybords
 from telebot.types import CallbackQuery
@@ -30,6 +31,7 @@ def menu_wall_handler(call:CallbackQuery, state: StateContext):
         state.set(WallStates.change_walets)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Выберите валюту:', reply_markup=markup)
+
     elif call.data == 'create_new_wallet':
         markup = keybords.currency_account_selection()
         state.set(WallStates.create_wallet)
@@ -57,6 +59,13 @@ def change_wallets_id(call:CallbackQuery, state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете счет, который хотите удалить',
                               reply_markup=markup)
+###
+    elif call.data == 'go_back_state_to_wallets':
+        markup = keybords.delete_change_the_wallet_create()
+        state.set(WallStates.wallets_state)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберете что нужно изменить в ваших Кошельках:', reply_markup=markup)
+
 
 
 @bot.callback_query_handler(func=lambda call: True, state=WallStates.delete_account)
@@ -86,6 +95,13 @@ def create_wallet_id(call:CallbackQuery, state: StateContext):
         state.add_data(**{"chat_id_1": call.message.chat.id})
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите название нового счета :')
+
+
+    elif call.data == 'go_back_state_to_wallets':
+        markup = keybords.delete_change_the_wallet_create()
+        state.set(WallStates.wallets_state)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберете что нужно изменить в ваших Кошельках:', reply_markup=markup)
 
 @bot.message_handler(state=WallStates.create_new_name_account)
 def input_wallet_state(message: types.Message, state: StateContext):
@@ -136,6 +152,13 @@ def change_wallets_id(call:CallbackQuery, state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете счет, который хотите переименовать',
                               reply_markup=markup)
+
+
+    elif call.data == 'go_back_state_to_wallets':
+        markup = keybords.delete_change_the_wallet_create()
+        state.set(WallStates.wallets_state)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберете что нужно изменить в ваших Кошельках:', reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: True, state=WallStates.input_new_wallet)
 def change_category_delite(call:CallbackQuery, state: StateContext):

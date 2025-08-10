@@ -16,6 +16,7 @@ class MyStates(StatesGroup):
     category_choice = State()
     currency_choice = State()
     aocount_choice = State()
+    start_choice = State()
 
     input_amount_state = State()
     input_comment_state = State()
