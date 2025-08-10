@@ -44,9 +44,10 @@ def change_comand(call:CallbackQuery,state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете что нужно изменить в ваших Кошельках',
                               reply_markup=markup)
+
+
     elif call.data == 'go_back_state_wallet':
         markup = keybords.transaction_status_changing_categories()
-        state.set(MyStates.start_choice)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете нужную команду',
                               reply_markup=markup)

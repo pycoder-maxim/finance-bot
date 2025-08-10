@@ -37,7 +37,7 @@ def add_category_chek():
 def add_waltet_chek():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command1 = types.InlineKeyboardButton('1. Добавить счет ', callback_data='chek_wallet_add')
-    command2 = types.InlineKeyboardButton('2. Вернуться назад 🔙 ', callback_data='go_back_to_input_category')
+    command2 = types.InlineKeyboardButton('2. Вернуться назад 🔙 ', callback_data='go_back_to_input_wallet')
     markup.add(command1,command2)
     return markup
 
@@ -82,7 +82,7 @@ def currency_account_selection():
     currencies_list:list[Currencies] = db_api.currencies().get_all_currencies()
     buttons = [types.InlineKeyboardButton(cur.name + " " + cur.symbol, callback_data="curr_id:" + cur.id.__str__()) for cur in currencies_list]
     markup.add(*buttons)
-    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state_to_wallets')
     markup.add(command4)
     return markup
 
@@ -94,21 +94,21 @@ def add_categories():
     return markup
 
 
-#______________________________________________________________________________________________________________________
+#_______________________________________________________________________________________________________________________
 def create_wallets_markup(useer_id:int, cur_code:str):
     markup = types.InlineKeyboardMarkup(row_width=1)
     currency:Currencies = db_api.currencies().get_curreny_by_code(code=cur_code)
     wallets = db_api.wallets().get_wallets_by_user_id_and_cur_id(useer_id, currency.id)
     buttons = [types.InlineKeyboardButton(wallet.name, callback_data="wall_id:"+wallet.id.__str__()) for wallet in wallets]
     markup.add(*buttons)
-    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state_to_wallets')
     markup.add(command4)
     return markup
 
 
 
 
-#______________________________________________________________________________________________________________________
+#_______________________________________________________________________________________________________________________
 def create_categories_keyboard(list_of_cats:list[Categories]):
     markup = types.InlineKeyboardMarkup(row_width=1)
     categories_buttons = [types.InlineKeyboardButton(str(cat.name), callback_data="cat_id:"+cat.id.__str__()) for cat in list_of_cats]

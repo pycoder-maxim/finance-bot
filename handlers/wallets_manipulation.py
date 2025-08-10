@@ -80,7 +80,15 @@ def delete_acount(call:CallbackQuery, state: StateContext):
         markup = keybords.transaction_status_changing_categories()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Счет удален',reply_markup=markup)
+
         state.delete()
+
+    elif call.data == 'go_back_state_to_wallets':
+        state.set(WallStates.change_walets)
+        markup = keybords.currency_account_selection()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберите валюту:', reply_markup=markup)
+
 
 #create_acount
 #_______________________________________________________________________________________________________________________
@@ -118,13 +126,16 @@ def input_wallet_state(message: types.Message, state: StateContext):
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                               text=f"Вы точно хотите добавить новый счет: ({message.text}) ? ",reply_markup=markup)
 
+
 @bot.callback_query_handler(func=lambda call: True, state=WallStates.final_add_wallet)
 def final_add_wallet(call: CallbackQuery, state: StateContext):
-    if call.data == 'go_back_to_input_category':
-        state.set(WallStates.wallets_state)
-        markup = keybords.go_to_menu()
+    if call.data == 'go_back_to_input_wallet':
+        markup = keybords.currency_account_selection()
+        state.set(WallStates.create_wallet)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                              text='Выберите нужный раздел:', reply_markup=markup)
+                              text='Выберите валюту:', reply_markup=markup)
+
+
     elif call.data == 'chek_wallet_add':
         with state.data() as data:
             user_id = call.from_user.id
