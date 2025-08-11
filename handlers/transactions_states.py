@@ -316,11 +316,12 @@ def finish_state_callback(call: CallbackQuery, state: StateContext):
             db_api.transactions().add_transaction(call.message.from_user.id, name, report_data, created_at, amount,
                                                   int(cur_id), int(wall_id), int(cat_id))
 
-            markup = keybords.transaction_status_changing_categories()
+            markup = keybords.after_transaction_add_markup()
             bot.edit_message_text(
                 chat_id=call.message.chat.id,
                 message_id=call.message.id,
-                text="✅ Транзакция успешно сохранена!",
+                text=f"✅ Готово! {transaction_type[type].capitalize()} {amount} {curr.name} ({cat.name}) добавлен.\
+                        Что дальше?",
                 reply_markup=markup
             )
 

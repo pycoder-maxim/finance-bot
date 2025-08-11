@@ -44,10 +44,17 @@ def change_comand(call:CallbackQuery,state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете что нужно изменить в ваших Кошельках',
                               reply_markup=markup)
-
-
-
-
+    elif call.data == 'back_to_main_menu':
+        markup = keybords.transaction_status_changing_categories()
+        bot.send_message(call.messege.chat.id,
+                         'Выберете нужную команду',
+                         reply_markup=markup)
+        db_api.users().add_user(call.messege.from_user.id, call.messege.from_user.first_name, call.messege.from_user.last_name,
+                                call.messege.from_user.username, datetime.now().__str__())
+    elif call.data == 'balance_and_reports':
+        # Устанавливаем состояние (если нужно)
+        # state.set(MyStates.balance_state)  # если есть отдельное состояние для этого меню
+        print("s")
     else:
         result, key, step = DetailedTelegramCalendar(locale='ru').process(call.data)
         print(call.data)

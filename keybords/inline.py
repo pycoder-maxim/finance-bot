@@ -56,12 +56,21 @@ def rename_category_chek():
 #______________________________________________________________________________________________________________________
 def transaction_status_changing_categories():
     markup = types.InlineKeyboardMarkup(row_width=1)
-    command1 = types.InlineKeyboardButton('1. Состояние транзакций 📉', callback_data='transaction_status')
-    command2 = types.InlineKeyboardButton('2. Изменения категорий 📝', callback_data='changing_categories')
-    command3 = types.InlineKeyboardButton('3. Изменения пользовательских кошельков 💼', callback_data='changing_walets')
-    markup.add(command1, command2,command3)
+    command1 = types.InlineKeyboardButton('1. ✅ Создать транзакцию', callback_data='transaction_status')
+    command2 = types.InlineKeyboardButton('2. 📊 Баланс и отчёты', callback_data='balance_and_reports')
+    command3 = types.InlineKeyboardButton('2. 🗂 Категории', callback_data='changing_categories')
+    command4 = types.InlineKeyboardButton('3. 💳 Кошельки и валюты', callback_data='changing_walets')
+    markup.add(command1, command2,command3, command4)
     return markup
 
+
+def after_transaction_add_markup():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1.➕ Ещё транзакцияю', callback_data='transaction_status')
+    command2 = types.InlineKeyboardButton('2.📊 Баланс ', callback_data='balance_menu')
+    command3 = types.InlineKeyboardButton('2. 🏠 Главное меню', callback_data='back_to_main_menu')
+    markup.add(command1, command2, command3)
+    return markup
 
 #Клавиатура основного меню
 #______________________________________________________________________________________________________________________
