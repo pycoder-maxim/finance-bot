@@ -42,6 +42,16 @@ def menu_wall_handler(call:CallbackQuery, state: StateContext):
         state.set(WallStates.rename_wallet)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Выберите валюту:', reply_markup=markup)
+
+
+    elif call.data == "go_back_state_wallet":
+        state.delete()
+        state.set(MyStates.start_choice)
+        markup = keybords.transaction_status_changing_categories()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                         text='Выберете нужную команду',
+                         reply_markup=markup)
+
     return
 
 

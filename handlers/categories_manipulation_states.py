@@ -2,7 +2,7 @@ from telebot import types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
 import datetime
-
+from handlers.transactions_states import MyStates
 from database.build.lib.DataBaseModel import Currencies, Categories, Wallets
 from loader import bot, db_api
 import keybords
@@ -74,6 +74,14 @@ def menu_cat_handler(call:CallbackQuery, state: StateContext):
         state.set(CatStates.create_category)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Выберите нужный раздел:',reply_markup=markup)
+
+    elif call.data == "go_back_state_category":
+        state.delete()
+        state.set(MyStates.start_choice)
+        markup = keybords.transaction_status_changing_categories()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                         text='Выберете нужную команду',
+                         reply_markup=markup)
 
 
 
