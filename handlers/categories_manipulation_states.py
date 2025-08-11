@@ -98,6 +98,12 @@ def create_category(call:CallbackQuery, state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Введите название новой категории:')
 
+    elif call.data == 'back_to_main_menu':
+        markup = keybords.delete_change_the_name_create()
+        state.set(CatStates.category_state)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберете действие:', reply_markup=markup)
+
 
 
 @bot.message_handler(state=CatStates.input_new_category)
@@ -118,10 +124,16 @@ def input_category_state(message: types.Message, state: StateContext):
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.final_add_category)
 def final_add_category(call: CallbackQuery, state: StateContext):
     if call.data == 'go_back_to_input_category':
-        state.set(CatStates.category_state)
-        markup = keybords.go_to_menu()
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                              text='Выберите нужный раздел:', reply_markup=markup)
+        state.set(CatStates.create_category)
+        state.set(CatStates.input_new_category)
+        state.add_data(**{"message_id": call.message.id})
+        state.add_data(**{"chat_id_1": call.message.chat.id})
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Введите название новой категории:')
+
+
+
+
     elif call.data == 'chek_add':
         with state.data() as data:
             name = data.get("name")
@@ -135,6 +147,7 @@ def final_add_category(call: CallbackQuery, state: StateContext):
 
 
 #delite_the_category
+#______________________________________________________________________________________________________________________
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.category_choice)
 def add_new_catgory(call:CallbackQuery, state: StateContext):
     if call.data.startswith("add"):
@@ -145,6 +158,12 @@ def add_new_catgory(call:CallbackQuery, state: StateContext):
         markup = keybords.create_categories_keyboard(list_of_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text=f'Выберите категорию которую хотите удалить: {message_word_second_state.get(aim)}:', reply_markup=markup)
+
+    elif call.data == 'back_to_main_menu':
+        markup = keybords.delete_change_the_name_create()
+        state.set(CatStates.category_state)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберете действие:', reply_markup=markup)
 
 
 
@@ -167,9 +186,15 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
                                   text=f'Категория удаленна: {message_word_second_state.get(aim)}:',
                                   reply_markup=markup)
         state.delete()
+    elif call.data == 'go_back_state_cat':
+        state.set(CatStates.category_choice)
+        markup = keybords.go_to_menu()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберите нужный раздел:', reply_markup=markup)
 
 
-#change_category
+
+#rename_category
 #______________________________________________________________________________________________________________________
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.change_category)
 def add_new_catgory(call:CallbackQuery, state: StateContext):
@@ -181,6 +206,12 @@ def add_new_catgory(call:CallbackQuery, state: StateContext):
         markup = keybords.create_categories_keyboard(list_of_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text=f'Выберите категорию которую хотите переименовать: {message_word_second_state.get(aim)}:', reply_markup=markup)
+
+    elif call.data == 'back_to_main_menu':
+        markup = keybords.delete_change_the_name_create()
+        state.set(CatStates.category_state)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                              text='Выберете действие:', reply_markup=markup)
 
 
 
@@ -195,9 +226,9 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
         state.add_data(**{"chat_id_1": call.message.chat.id})
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                   text=f'Введите название новой категории: ')
-    elif call.data == 'go_back_state':
+    elif call.data == 'go_back_state_cat':
+        state.set(CatStates.category_choice)
         markup = keybords.go_to_menu()
-        state.set(CatStates.category_state)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text='Выберите нужный раздел:', reply_markup=markup)
 

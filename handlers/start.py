@@ -36,7 +36,7 @@ def change_comand(call:CallbackQuery,state: StateContext):
         state.set(CatStates.category_state)
         markup = keybords.delete_change_the_name_create()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберете тип категории',
+                              text='Выберете действие',
                               reply_markup=markup)
     elif call.data == 'changing_walets':
         state.set(WallStates.wallets_state)

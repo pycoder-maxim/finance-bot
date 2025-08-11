@@ -71,7 +71,7 @@ def go_to_menu():
     command2 = types.InlineKeyboardButton('2. Расходы 🪫', callback_data='add_expense')
     command3 = types.InlineKeyboardButton('3. Сбережения 💰', callback_data='add_savings')
     command4 = types.InlineKeyboardButton('4. Цель 🎯', callback_data='add_goals')
-    command5 = types.InlineKeyboardButton("Назад", callback_data="back_to_main_menu")
+    command5 = types.InlineKeyboardButton('5. Вернуться назад 🔙', callback_data='back_to_main_menu')
     markup.add(command1, command2, command3, command4, command5)
     return markup
 
@@ -114,7 +114,7 @@ def create_categories_keyboard(list_of_cats:list[Categories]):
     markup = types.InlineKeyboardMarkup(row_width=1)
     categories_buttons = [types.InlineKeyboardButton(str(cat.name), callback_data="cat_id:"+cat.id.__str__()) for cat in list_of_cats]
     markup.add(*categories_buttons)
-    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
+    command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state_cat')
     markup.add(command4)
     return markup
 
