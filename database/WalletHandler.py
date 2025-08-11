@@ -20,21 +20,16 @@ class WalletHandler:
     def get_wallets_by_user_id_and_cur_id(self, user_id:int, cur_id:int) -> Wallets:
         return self.__session__.query(Wallets).filter(Wallets.user_id == user_id, Wallets.currency_id == cur_id).all()
 
-    def update_wallet(self, telegram_id: int, name: str = None, currency: str = None) -> bool:
-        user = self.__session__.query(Users).filter(Users.telegram_id == telegram_id).first()
+    def update_wallet(self, telegram_id: int,  **kwargs) -> bool:
+        user = self.__session__.query(Wallets).get(telegram_id)
         if not user:
             return False
-        update_data = {}
-        if name is not None:
-            update_data['name'] = name
-        if currency is not None:
-            update_data['currency'] = currency
-        if update_data:
+        for key, value in kwargs.items():
+            if hasattr(user, key):
+                setattr(user, key, value)
+        self.__session__.commit()
+        return True
 
-            self.__session__.query(Wallets).filter(Wallets.user_id == user.id ).update(update_data)
-            self.__session__.commit()
-            return True
-        return False
 
     def delete_wallet(self, wall_id : int) -> bool:
         wallet = (

@@ -21,6 +21,7 @@ class WallStates(StatesGroup):
     rename_wallet = State()
     input_new_wallet = State()
     final_rename_wallet = State()
+    wallets_state_4 = State()
 
 
 
@@ -200,15 +201,16 @@ def final_rename(message: types.Message, state: StateContext):
         bot.delete_message(message.chat.id, message.id)
     except Exception as err:
         print(err)
+
+    new_name = message.text
     state.add_data(**{"name": message.text})
+    state.set(WallStates.wallets_state_4)
     with state.data() as data:
         chat_id = data.get("chat_id_1")
         message_id = data.get("message_id")
-        id = int(data.get("cur_id"))
-        cur: Currencies = db_api.currencies().get_curreny_by_id(id)
-        new_name = message.text
-        state.set(WallStates.wallets_state)
-        db_api.wallets().update_wallet(telegram_id=message.from_user.id,currency=cur,name=new_name)
+        telegram_id = data["wall_id"]
+        db_api.wallets().update_wallet(telegram_id=telegram_id, name=new_name)
+        print('лол')
         markup = keybords.transaction_status_changing_categories()
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                               text=f"Счет переименован ✅",reply_markup=markup)

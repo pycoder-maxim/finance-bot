@@ -169,9 +169,6 @@ def change_category_delite(call:CallbackQuery, state: StateContext):
         state.delete()
 
 
-
-
-
 #change_category
 #______________________________________________________________________________________________________________________
 @bot.callback_query_handler(func=lambda call: True, state=CatStates.change_category)
@@ -184,8 +181,6 @@ def add_new_catgory(call:CallbackQuery, state: StateContext):
         markup = keybords.create_categories_keyboard(list_of_categories)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text=f'Выберите категорию которую хотите переименовать: {message_word_second_state.get(aim)}:', reply_markup=markup)
-
-
 
 
 
