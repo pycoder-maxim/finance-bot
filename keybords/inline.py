@@ -71,7 +71,8 @@ def go_to_menu():
     command2 = types.InlineKeyboardButton('2. Расходы 🪫', callback_data='add_expense')
     command3 = types.InlineKeyboardButton('3. Сбережения 💰', callback_data='add_savings')
     command4 = types.InlineKeyboardButton('4. Цель 🎯', callback_data='add_goals')
-    markup.add(command1, command2, command3, command4)
+    command5 = types.InlineKeyboardButton("Назад", callback_data="back_to_main_menu")
+    markup.add(command1, command2, command3, command4, command5)
     return markup
 
 
