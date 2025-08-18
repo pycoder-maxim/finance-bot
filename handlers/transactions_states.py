@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from telebot import types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
@@ -307,20 +309,30 @@ def finish_state_callback(call: CallbackQuery, state: StateContext):
             name = data.get("type")
             report_data = data.get("comment")
             created_at = datetime.datetime.now().__str__()
-            amount = data.get("amount")
+            amount = Decimal(str(data.get("amount")))
 
             cat: Categories = db_api.categories().get_categories_by_id(cat_id)
             curr: Currencies = db_api.currencies().get_curreny_by_id(cur_id)
-            wallet: Wallets = db_api.wallets().get_wallets_by_id(wall_id)
-            trans_type_rus = transaction_type.get(type)
-            db_api.transactions().add_transaction(call.message.from_user.id, name, report_data, created_at, amount,
-                                                  int(cur_id), int(wall_id), int(cat_id))
+            db_api.wallets().get_wallets_by_id(wall_id)
+
+            success = db_api.wallets().add_to_balance(
+                user_id=call.from_user.id,
+                amount=amount if type == "income" else -amount,
+                wall_id=data.get('wall_id')
+            )
+
+            if not success:
+                bot.answer_callback_query(call.id, "❌ Ошибка при обновлении баланса")
+                return
+
+
+
 
             markup = keybords.after_transaction_add_markup()
             bot.edit_message_text(
                 chat_id=call.message.chat.id,
                 message_id=call.message.id,
-                text=f"✅ Готово! {transaction_type[type].capitalize()} {amount} {curr.name} ({cat.name}) добавлен.\
+                text=f"✅ Готово! {transaction_type[type].capitalize()} {amount}  {curr.name} ({cat.name}) добавлен.\
                         Что дальше?",
                 reply_markup=markup
             )
@@ -513,6 +525,7 @@ def input_ask_comment(message: types.Message, state: StateContext):
         trans_type_rus = transaction_type.get(type)
         # db_api.transactions().add_transaction(message.from_user.id, type, report_data, created_at, amount,
         #                                      curr.id, wallet.id, cat.id)
+
         msg = (
             f"Подтвердите или исправьте даные транзакции, которые Вы ввели:\n"
             f"Тип Транзакции - {trans_type_rus}\n"
