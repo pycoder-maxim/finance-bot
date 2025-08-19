@@ -202,7 +202,8 @@ def ask_amount_transation(message: types.Message, state: StateContext):
         chat_id = data.get("chat_id_1")
         message_id = data.get("message_id")
         comment = data.get("comment")
-        markup = keybords.create_comment_transaction_state_markup(comment)
+        amount = data.get("amount")
+        markup = keybords.create_accounts_buttons_markup(amount)
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                               text='Введите корректную сумму транзакции',
                               reply_markup=markup)
@@ -317,9 +318,11 @@ def finish_state_callback(call: CallbackQuery, state: StateContext):
 
             success = db_api.wallets().add_to_balance(
                 user_id=call.from_user.id,
-                amount=amount if type == "income" else -amount,
-                wall_id=data.get('wall_id')
+                amount=-amount if type == "expense" else amount,
+                wall_id=wall_id
             )
+            db_api.transactions().add_transaction(call.message.from_user.id, type, report_data, created_at, amount,
+                                                  curr.id, wall_id, cat.id)
 
             if not success:
                 bot.answer_callback_query(call.id, "❌ Ошибка при обновлении баланса")
