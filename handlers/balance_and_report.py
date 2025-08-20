@@ -10,14 +10,31 @@ from loader import bot, db_api
 import keybords
 from telebot.types import CallbackQuery
 
-class Balance_and_Reports(StatesGroup):
-    wallets_state = State()
-    change_walets = State()
-    delete_account = State()
-    final_delete_state = State()
-    create_wallet = State()
-    create_new_name_account = State()
-    final_add_wallet = State()
-    rename_wallet = State()
-    input_new_wallet = State()
-    final_rename_wallet = State()
+class Balance_and_Reports_States(StatesGroup):
+    begin_state = State()
+    show_reports_state = State()
+    check_ballence_state = State()
+
+@bot.callback_query_handler(func=lambda call: True, state=Balance_and_Reports_States.begin_state)
+def begin_state(call:CallbackQuery, state: StateContext):
+    if call.data == 'show_reports':
+        state.set(Balance_and_Reports_States.show_reports_state)
+        markup = keybords.reports_time_piriod()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберите отчеты за определенный промежуток 📅',
+                              reply_markup=markup)
+
+    elif call.data == 'chek_current_balance':
+        state.set(Balance_and_Reports_States.check_ballence_state)
+        get_ballance = db_api.wallets().get_total_balance(user_id=call.from_user.id)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text=f'Ваш текущий балланс сосотовляет: {get_ballance}')
+
+
+
+
+
+
+
+
+

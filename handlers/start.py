@@ -9,6 +9,7 @@ from calendar_tg import DetailedTelegramCalendar, LSTEP
 from datetime import date
 from telebot.types import CallbackQuery
 from wallets_manipulation import WallStates
+from balance_and_report import Balance_and_Reports_States
 
 
 @bot.message_handler(commands=['start'])
@@ -46,15 +47,19 @@ def change_comand(call:CallbackQuery,state: StateContext):
                               reply_markup=markup)
     elif call.data == 'back_to_main_menu':
         markup = keybords.transaction_status_changing_categories()
-        bot.send_message(call.messege.chat.id,
+        bot.send_message(call.message.chat.id,
                          'Выберете нужную команду',
                          reply_markup=markup)
-        db_api.users().add_user(call.messege.from_user.id, call.messege.from_user.first_name, call.messege.from_user.last_name,
-                                call.messege.from_user.username, datetime.now().__str__())
+        db_api.users().add_user(call.message.from_user.id, call.message.from_user.first_name, call.message.from_user.last_name,
+                                call.message.from_user.username, datetime.now().__str__())
     elif call.data == 'balance_and_reports':
-        # Устанавливаем состояние (если нужно)
-        # state.set(MyStates.balance_state)  # если есть отдельное состояние для этого меню
-        print("s")
+        state.set(Balance_and_Reports_States.begin_state)
+        markup = keybords.reports_and_ballance()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберете то что хотите проверить: ',
+                              reply_markup=markup)
+
+
     else:
         result, key, step = DetailedTelegramCalendar(locale='ru').process(call.data)
         print(call.data)

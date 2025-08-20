@@ -115,8 +115,26 @@ def create_wallets_markup(useer_id:int, cur_code:str):
     markup.add(command4)
     return markup
 
+#Клавиатура баланса и отчетов
+#_______________________________________________________________________________________________________________________
+def reports_and_ballance():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1.Посмотреть отчеты 📈', callback_data='show_reports')
+    command2 = types.InlineKeyboardButton('2. Проверить текущий баланс 🔍💰 ', callback_data='chek_current_balance')
+    markup.add(command1, command2)
+    return markup
 
 
+# Отчеты за временной период
+#_______________________________________________________________________________________________________________________
+def reports_time_piriod():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. За день ', callback_data='report for the day')
+    command2 = types.InlineKeyboardButton('2. За неделю ', callback_data='report for the week')
+    command3 = types.InlineKeyboardButton('2. За месяц ', callback_data='report for the mounth')
+    command4 = types.InlineKeyboardButton('2. За месяц ', callback_data='report for the year')
+    markup.add(command1, command2, command3, command4)
+    return markup
 
 #_______________________________________________________________________________________________________________________
 def create_categories_keyboard(list_of_cats:list[Categories]):

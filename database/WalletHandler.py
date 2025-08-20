@@ -1,6 +1,7 @@
 from DataBaseModel import Wallets, Users
 from sqlalchemy.orm import Session
 import datetime
+from sqlalchemy import func
 from DataBaseModel import Currencies
 class WalletHandler:
     def __init__(self, session:Session):
@@ -49,7 +50,6 @@ class WalletHandler:
                     Wallets.user_id == user_id
                 ).first()
 
-
             if not wallet:
                 default_currency = self.__session__.query(Currencies).first()
                 if not default_currency:
@@ -71,6 +71,17 @@ class WalletHandler:
             print(f"❌ Ошибка в add_to_balance: {str(e)}")
             self.__session__.rollback()
             return False
+
+    def get_total_balance(self, user_id: int) -> float:
+        total = (
+            self.__session__.query(func.sum(Wallets.value))
+            .filter(Wallets.user_id == user_id)
+            .scalar()
+        )
+        return float(total) if total else 0.0
+
+
+
 
 
 
