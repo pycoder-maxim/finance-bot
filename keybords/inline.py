@@ -141,7 +141,8 @@ def reports_time_piriod():
     command2 = types.InlineKeyboardButton('2. За неделю ', callback_data='report for the week')
     command3 = types.InlineKeyboardButton('3. За месяц ', callback_data='report for the mounth')
     command4 = types.InlineKeyboardButton('4. За год ', callback_data='report for the year')
-    markup.add(command1, command2, command3, command4)
+    command5 = types.InlineKeyboardButton('5. Вернуться назад 🔙  ', callback_data='go_back')
+    markup.add(command1, command2, command3, command4,command5)
     return markup
 
 #_______________________________________________________________________________________________________________________
