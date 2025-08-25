@@ -12,13 +12,13 @@ from telebot.types import CallbackQuery
 
 class Balance_and_Reports_States(StatesGroup):
     begin_state = State()
-    show_reports_state = State()
+    input_reports_state = State()
     check_ballence_state = State()
 
 @bot.callback_query_handler(func=lambda call: True, state=Balance_and_Reports_States.begin_state)
 def begin_state(call:CallbackQuery, state: StateContext):
     if call.data == 'show_reports':
-        state.set(Balance_and_Reports_States.show_reports_state)
+        state.set(Balance_and_Reports_States.input_reports_state)
         markup = keybords.reports_time_piriod()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберите промежуток дохода  📅',
@@ -42,6 +42,33 @@ def begin_state(call:CallbackQuery, state: StateContext):
 
 
         state.delete()
+
+@bot.callback_query_handler(func=lambda call: True, state=Balance_and_Reports_States.input_reports_state)
+def input_state(call:CallbackQuery, state: StateContext):
+    if call.data == 'report for the day':
+        pass
+    elif call.data == 'report for the week':
+        pass
+    elif call.data == 'report for the mounth':
+        pass
+    elif call.data == 'report for the year':
+        pass
+    elif call.data == 'go_back':
+        state.delete()
+        state.set(Balance_and_Reports_States.begin_state)
+        markup = keybords.reports_and_ballance()
+        wallets = db_api.wallets().get_wallets_by_user_id(user_id=call.from_user.id)
+        wallet_info = ''
+        for wallet in wallets:
+            wallet_info += f'{wallet.name}:  {wallet.value} руб.\n'
+        bold_title = '<b>➕💼 Сумма ваших кошельков:</b>'
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text=f'{bold_title} : \n\n {wallet_info} ',
+                              reply_markup=markup, parse_mode='HTML')
+
+
+
+
 
 
 
