@@ -121,8 +121,17 @@ def reports_and_ballance():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command1 = types.InlineKeyboardButton('1.Посмотреть отчеты 📈', callback_data='show_reports')
     command2 = types.InlineKeyboardButton('2. Проверить текущий баланс 🔍💰 ', callback_data='chek_current_balance')
-    markup.add(command1, command2)
+    command3 = types.InlineKeyboardButton('3. Вернуться назад 🔙 ', callback_data='go_to_back_menu')
+    markup.add(command1, command2, command3)
     return markup
+#
+#_______________________________________________________________________________________________________________________
+def go_to_back():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    command1 = types.InlineKeyboardButton('1. Вернуться назад 🔙 ', callback_data='go_to_back_menu_fin')
+    markup.add(command1)
+    return markup
+
 
 
 # Отчеты за временной период
@@ -131,8 +140,8 @@ def reports_time_piriod():
     markup = types.InlineKeyboardMarkup(row_width=1)
     command1 = types.InlineKeyboardButton('1. За день ', callback_data='report for the day')
     command2 = types.InlineKeyboardButton('2. За неделю ', callback_data='report for the week')
-    command3 = types.InlineKeyboardButton('2. За месяц ', callback_data='report for the mounth')
-    command4 = types.InlineKeyboardButton('2. За месяц ', callback_data='report for the year')
+    command3 = types.InlineKeyboardButton('3. За месяц ', callback_data='report for the mounth')
+    command4 = types.InlineKeyboardButton('4. За год ', callback_data='report for the year')
     markup.add(command1, command2, command3, command4)
     return markup
 

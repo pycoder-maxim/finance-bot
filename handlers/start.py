@@ -55,8 +55,14 @@ def change_comand(call:CallbackQuery,state: StateContext):
     elif call.data == 'balance_and_reports':
         state.set(Balance_and_Reports_States.begin_state)
         markup = keybords.reports_and_ballance()
+        wallets = db_api.wallets().get_wallets_by_user_id(user_id=call.from_user.id)
+        wallet_info = ''
+        for wallet in wallets:
+            wallet_info += str(wallet.name) + str(wallet.value)
+
+
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберете то что хотите проверить: ',
+                              text=f'Сумма ваших кошельков :  {wallet_info} ',
                               reply_markup=markup)
 
 
