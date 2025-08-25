@@ -21,16 +21,8 @@ def begin_state(call:CallbackQuery, state: StateContext):
         state.set(Balance_and_Reports_States.show_reports_state)
         markup = keybords.reports_time_piriod()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберите отчеты за определенный промежуток 📅',
+                              text='Выберите промежуток 📅',
                               reply_markup=markup)
-
-    elif call.data == 'chek_current_balance':
-        state.set(Balance_and_Reports_States.check_ballence_state)
-        markup = keybords.go_to_back()
-        get_ballance = db_api.wallets().get_total_balance(user_id=call.from_user.id)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text=f'Ваш текущий балланс сосотовляет: {get_ballance}',reply_markup=markup)
-        state.delete()
 
     elif call.data == 'go_to_back_menu':
         state.delete()
