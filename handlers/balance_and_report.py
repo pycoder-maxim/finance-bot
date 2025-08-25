@@ -21,7 +21,7 @@ def begin_state(call:CallbackQuery, state: StateContext):
         state.set(Balance_and_Reports_States.show_reports_state)
         markup = keybords.reports_time_piriod()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Выберите промежуток 📅',
+                              text='Выберите промежуток дохода  📅',
                               reply_markup=markup)
 
     elif call.data == 'go_to_back_menu':
