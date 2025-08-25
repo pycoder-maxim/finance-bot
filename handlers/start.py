@@ -58,12 +58,12 @@ def change_comand(call:CallbackQuery,state: StateContext):
         wallets = db_api.wallets().get_wallets_by_user_id(user_id=call.from_user.id)
         wallet_info = ''
         for wallet in wallets:
-            wallet_info += str(wallet.name) + str(wallet.value)
+            wallet_info += f'{wallet.name}:  {wallet.value} руб.\n'
 
-
+        bold_title = '<b>➕💼 Сумма ваших кошельков:</b>'
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text=f'Сумма ваших кошельков :  {wallet_info} ',
-                              reply_markup=markup)
+                              text=f'{bold_title} : \n\n {wallet_info} ',
+                              reply_markup=markup,parse_mode='HTML')
 
 
     else:
