@@ -144,6 +144,12 @@ def reports_time_piriod():
     command5 = types.InlineKeyboardButton('5. Вернуться назад 🔙  ', callback_data='go_back')
     markup.add(command1, command2, command3, command4,command5)
     return markup
+#_______________________________________________________________________________________________________________________
+def back_to_reports_button():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    back_button = types.InlineKeyboardButton("⬅️ Назад к отчетам", callback_data="go_back_to_reports")
+    markup.add(back_button)
+    return markup
 
 #_______________________________________________________________________________________________________________________
 def create_categories_keyboard(list_of_cats:list[Categories]):

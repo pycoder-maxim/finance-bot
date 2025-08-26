@@ -28,6 +28,30 @@ class TransactionsHandler:
         self.__session__.commit()
         return True
 
+    def get_by_type_period(self, user_id, transaction_type, start_date, end_date):
+        """
+        Получение транзакций по типу за период
+        """
+        # Преобразуем даты из строк в объекты datetime для сравнения
+        from datetime import datetime
+        start_dt = datetime.strptime(start_date, "%Y-%m-%d %H:%M:%S")
+        end_dt = datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S")
+
+        # Фильтруем по пользователю и дате
+        transactions = self.__session__.query(Transactions).filter(
+            Transactions.user_id == user_id,
+            Transactions.created_at.between(start_dt, end_dt)
+        ).all()
+
+        # Дополнительная фильтрация по типу транзакции
+        if transaction_type == "income":
+            return [tr for tr in transactions if tr.amount > 0]
+        elif transaction_type == "expense":
+            return [tr for tr in transactions if tr.amount < 0]
+        else:
+            return transactions
+
+
     def delete_transactions(self, transactions_id: int) -> bool:
         transaction = self.__session__.query(Transactions).get(transactions_id)
         if not transaction:
