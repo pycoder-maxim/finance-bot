@@ -30,6 +30,7 @@ class Balance_and_Reports_States(StatesGroup):
     custom_period_state = State()
     select_start_date = State()
     select_end_date = State()
+    back_state = State()
 
 selected_start_date = None
 selected_end_date = None
@@ -171,8 +172,17 @@ def handle_end_date(call: CallbackQuery, state: StateContext):
                               reply_markup=keybords.back_to_reports_button(),
                               parse_mode='HTML')
 
-        state.set(Balance_and_Reports_States.input_reports_state)
+        state.set(Balance_and_Reports_States.back_state)
 
+
+@bot.callback_query_handler(func=lambda call: True, state=Balance_and_Reports_States.back_state)
+def handle_back_to_reports(call: CallbackQuery, state: StateContext):
+    if call.data == "go_back_to_reports":
+        state.set(Balance_and_Reports_States.input_reports_state)
+        markup = keybords.reports_time_piriod()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберите промежуток отчета 📅',
+                              reply_markup=markup)
 
 def generate_report(user_id: int, start_date: datetime, end_date: datetime, period_text: str) -> str:
     try:
