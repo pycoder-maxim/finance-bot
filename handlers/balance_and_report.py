@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import datetime as std_datetime
 from telebot.types import CallbackQuery, Message
 import logging
+from calendar_tg.detailed import DetailedTelegramCalendar
 logger = logging.getLogger(__name__)
 
 
@@ -21,6 +22,8 @@ class Balance_and_Reports_States(StatesGroup):
     input_reports_state = State()
     check_ballence_state = State()
     custom_period_state = State()
+    select_start_date = State()
+    select_end_date = State()
 
 @bot.callback_query_handler(func=lambda call: True, state=Balance_and_Reports_States.begin_state)
 def begin_state(call:CallbackQuery, state: StateContext):
@@ -83,8 +86,12 @@ def input_state(call:CallbackQuery, state: StateContext):
 
     elif call.data == 'custom_period':
         state.set(Balance_and_Reports_States.custom_period_state)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Введите период в формате: ДД.ММ.ГГГГ-ДД.ММ.ГГГГ\nНапример: 01.01.2023-31.01.2023')
+        calendar = DetailedTelegramCalendar(locale='ru')
+        markup = calendar.build()[0]
+        bot.edit_message_text("Выберите начальную дату 📅",
+                              call.message.chat.id,
+                              call.message.message_id,
+                              reply_markup=markup)
         return
 
     elif call.data == 'go_back':
@@ -110,6 +117,20 @@ def input_state(call:CallbackQuery, state: StateContext):
             parse_mode='HTML'
         )
 
+
+@bot.callback_query_handler(func=DetailedTelegramCalendar.func())
+def handle_calendar(call: CallbackQuery):
+    result, key, step = DetailedTelegramCalendar(locale='ru').process(call.data)
+
+    if not result and key:
+        bot.edit_message_text("Выберите дату",
+                              call.message.chat.id,
+                              call.message.message_id,
+                              reply_markup=key)
+    elif result:
+        bot.edit_message_text(f"Вы выбрали {result}",
+                              call.message.chat.id,
+                              call.message.message_id)
 
 def generate_report(user_id: int, start_date: datetime, end_date: datetime, period_text: str) -> str:
     """
