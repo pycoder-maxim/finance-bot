@@ -8,6 +8,7 @@ class TransactionsHandler:
 
 
 
+
     def get_Transactions_by_user_id(self,user_id: int) -> list[Transactions]:
         return self.__session__.query(Transactions).filter(Transactions.user_id == user_id).all()
 
@@ -22,10 +23,8 @@ class TransactionsHandler:
         return True
 
     def get_by_type_period(self, user_id, transaction_type, start_date, end_date):
-        """
-        Получение транзакций по типу за период
-        """
-        # Преобразуем даты из строк в объекты datetime для сравнения
+
+
         from datetime import datetime
         start_dt = datetime.strptime(start_date, "%Y-%m-%d %H:%M:%S")
         end_dt = datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S")
@@ -33,7 +32,7 @@ class TransactionsHandler:
         print(f"🔄 DEBUG: Filtering transactions for user {user_id}")
         print(f"🔄 DEBUG: Date range: {start_dt} to {end_dt}")
 
-        # Фильтруем по пользователю и дате
+
         transactions = self.__session__.query(Transactions).filter(
             Transactions.user_id == user_id,
             Transactions.created_at.between(start_dt, end_dt)
@@ -41,7 +40,7 @@ class TransactionsHandler:
 
         print(f"🔄 DEBUG: Found {len(transactions)} transactions in date range")
 
-        # Дополнительная фильтрация по типу транзакции
+
         if transaction_type == "income":
             result = [tr for tr in transactions if tr.amount > 0]
             print(f"🔄 DEBUG: Filtered {len(result)} income transactions")
@@ -55,7 +54,7 @@ class TransactionsHandler:
             return transactions
 
     def get_transactions_by_user_and_period(self, user_id, start_date, end_date):
-        """Получить транзакции пользователя за указанный период"""
+
         return self.__session__.query(Transactions).filter(
             Transactions.user_id == user_id,
             Transactions.created_at >= start_date,

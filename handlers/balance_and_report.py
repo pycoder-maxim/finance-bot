@@ -48,10 +48,6 @@ def begin_state(call:CallbackQuery, state: StateContext):
 
 
 
-
-
-
-
         state.delete()
 
 @bot.callback_query_handler(func=lambda call: True, state=Balance_and_Reports_States.input_reports_state)
@@ -114,42 +110,53 @@ def input_state(call:CallbackQuery, state: StateContext):
             parse_mode='HTML'
         )
 
+
 def generate_report(user_id: int, start_date: datetime, end_date: datetime, period_text: str) -> str:
     """
     Генерирует финансовый отчет для пользователя за указанный период
     """
     try:
-        # Получаем данные из базы
+
         transactions = db_api.transactions().get_transactions_by_user_and_period(
             user_id=user_id,
             start_date=start_date,
             end_date=end_date
         )
 
-        # Получаем информацию о кошельках
+
         wallets = db_api.wallets().get_wallets_by_user_id(user_id=user_id)
 
-        # Рассчитываем общие суммы
+
         total_income = 0
         total_expense = 0
 
-        # Группируем по категориям
+
         income_by_category = {}
         expense_by_category = {}
 
         for transaction in transactions:
-            if transaction.type == 'income':
-                total_income += transaction.amount
-                if transaction.category_name not in income_by_category:
-                    income_by_category[transaction.category_name] = 0
-                income_by_category[transaction.category_name] += transaction.amount
-            elif transaction.type == 'expense':
-                total_expense += transaction.amount
-                if transaction.category_name not in expense_by_category:
-                    expense_by_category[transaction.category_name] = 0
-                expense_by_category[transaction.category_name] += transaction.amount
 
-        # Формируем текст отчета
+            if transaction.amount > 0:  # Доход
+                total_income += transaction.amount
+
+                category = db_api.categories().get_category_by_id(transaction.category_id)
+                category_name = category.name if category else "Без категории"
+
+                if category_name not in income_by_category:
+                    income_by_category[category_name] = 0
+                income_by_category[category_name] += transaction.amount
+
+            elif transaction.amount < 0:
+                total_expense += abs(transaction.amount)
+
+                category = db_api.categories().get_category_by_id(transaction.category_id)
+                category_name = category.name if category else "Без категории"
+
+                if category_name not in expense_by_category:
+                    expense_by_category[category_name] = 0
+                expense_by_category[category_name] += abs(transaction.amount)
+
+
         report_text = f"<b>📊 Отчет за {period_text}</b>\n"
         report_text += f"<b>Период:</b> {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}\n\n"
 
@@ -169,7 +176,7 @@ def generate_report(user_id: int, start_date: datetime, end_date: datetime, peri
 
         report_text += f"<b>📈 Баланс:</b> {total_income - total_expense:.2f} руб.\n\n"
 
-        # Добавляем информацию о кошельках
+
         report_text += "<b>💼 Состояние кошельков:</b>\n"
         for wallet in wallets:
             report_text += f"  • {wallet.name}: {wallet.value:.2f} руб.\n"
@@ -178,7 +185,7 @@ def generate_report(user_id: int, start_date: datetime, end_date: datetime, peri
 
     except Exception as e:
         logger.error(f"Error generating report: {e}")
-        return "❌ Произошла ошибка при формировании отчета"
+        return f"❌ Произошла ошибка при формировании отчета: {str(e)}"
 
 
 
@@ -194,7 +201,7 @@ def handle_custom_period(message: Message, state: StateContext):
 
         start_str, end_str = message.text.split('-')
 
-        # Преобразуем строки в даты
+
         start_date = datetime.strptime(start_str.strip(), "%d.%m.%Y").replace(hour=0, minute=0, second=0)
         end_date = datetime.strptime(end_str.strip(), "%d.%m.%Y").replace(hour=23, minute=59, second=59)
 
@@ -202,7 +209,7 @@ def handle_custom_period(message: Message, state: StateContext):
             bot.send_message(message.chat.id, "❌ Начальная дата не может быть позже конечной")
             return
 
-        # Генерируем отчет
+
         period_days = (end_date - start_date).days + 1
         period_text = f"произвольный период ({period_days} дней)"
 
@@ -215,7 +222,7 @@ def handle_custom_period(message: Message, state: StateContext):
             parse_mode='HTML'
         )
 
-        # Возвращаемся к выбору отчетов
+
         state.set(Balance_and_Reports_States.input_reports_state)
 
     except ValueError:

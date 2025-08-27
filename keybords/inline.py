@@ -119,7 +119,7 @@ def create_wallets_markup(useer_id:int, cur_code:str):
 #_______________________________________________________________________________________________________________________
 def reports_and_ballance():
     markup = types.InlineKeyboardMarkup(row_width=1)
-    command1 = types.InlineKeyboardButton('1. Добавить отчеты 📈', callback_data='show_reports')
+    command1 = types.InlineKeyboardButton('1. Посмотреть отчеты 📈', callback_data='show_reports')
     command2 = types.InlineKeyboardButton('2. назад 🔙 ', callback_data='go_to_back_menu')
     markup.add(command1, command2)
     return markup
