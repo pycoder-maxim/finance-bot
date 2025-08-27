@@ -141,8 +141,9 @@ def reports_time_piriod():
     command2 = types.InlineKeyboardButton('2. За неделю ', callback_data='report for the week')
     command3 = types.InlineKeyboardButton('3. За месяц ', callback_data='report for the mounth')
     command4 = types.InlineKeyboardButton('4. За год ', callback_data='report for the year')
-    command5 = types.InlineKeyboardButton('5. Вернуться назад 🔙  ', callback_data='go_back')
-    markup.add(command1, command2, command3, command4,command5)
+    command5 = types.InlineKeyboardButton('5. Создать свой период  ', callback_data='custom_period')
+    command6 = types.InlineKeyboardButton('6. Вернуться назад 🔙  ', callback_data='go_back')
+    markup.add(command1, command2, command3, command4, command5, command6)
     return markup
 #_______________________________________________________________________________________________________________________
 def back_to_reports_button():
@@ -181,6 +182,9 @@ def create_comment_transaction_state_markup(comment = None):
     command4 = types.InlineKeyboardButton('⬅️ Вернуться назад 🔙 ', callback_data='go_back_state')
     markup.add(command4)
     return markup
+
+
+
 
 #______________________________________________________________________________________________________________________
 def create_finish_transaction_state_markup():

@@ -6,14 +6,7 @@ class TransactionsHandler:
     def __init__(self, session:Session):
         self.__session__ = session
 
-    """
-    def create_reports(self, name: str, report_data: str, created_at: str, user_id: int) -> Transactions:
-        transactions = Transactions(name=name, report_data=report_data, created_at=created_at)
-        transactions.user_id = user_id
-        self.__session__.add(transactions)
-        self.__session__.commit()
-        return transactions
-    """
+
 
     def get_Transactions_by_user_id(self,user_id: int) -> list[Transactions]:
         return self.__session__.query(Transactions).filter(Transactions.user_id == user_id).all()
@@ -37,19 +30,38 @@ class TransactionsHandler:
         start_dt = datetime.strptime(start_date, "%Y-%m-%d %H:%M:%S")
         end_dt = datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S")
 
+        print(f"🔄 DEBUG: Filtering transactions for user {user_id}")
+        print(f"🔄 DEBUG: Date range: {start_dt} to {end_dt}")
+
         # Фильтруем по пользователю и дате
         transactions = self.__session__.query(Transactions).filter(
             Transactions.user_id == user_id,
             Transactions.created_at.between(start_dt, end_dt)
         ).all()
 
+        print(f"🔄 DEBUG: Found {len(transactions)} transactions in date range")
+
         # Дополнительная фильтрация по типу транзакции
         if transaction_type == "income":
-            return [tr for tr in transactions if tr.amount > 0]
+            result = [tr for tr in transactions if tr.amount > 0]
+            print(f"🔄 DEBUG: Filtered {len(result)} income transactions")
+            return result
         elif transaction_type == "expense":
-            return [tr for tr in transactions if tr.amount < 0]
+            result = [tr for tr in transactions if tr.amount < 0]
+            print(f"🔄 DEBUG: Filtered {len(result)} expense transactions")
+            return result
         else:
+            print(f"🔄 DEBUG: Returning all {len(transactions)} transactions")
             return transactions
+
+    def get_transactions_by_user_and_period(self, user_id, start_date, end_date):
+        """Получить транзакции пользователя за указанный период"""
+        return self.__session__.query(Transactions).filter(
+            Transactions.user_id == user_id,
+            Transactions.created_at >= start_date,
+            Transactions.created_at <= end_date
+        ).all()
+
 
 
     def delete_transactions(self, transactions_id: int) -> bool:
