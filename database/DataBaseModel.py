@@ -40,7 +40,7 @@ class Currencies(Base):
     id = Column(Integer, primary_key=True)
     code = Column(String, unique=True)      # "USD", "RUB"
     name = Column(String)                   # "Российский рубль"
-    symbol = Column(String)          # "₽", "$"
+    symbol = Column(String)                 # "₽", "$"
 
     def __init__(self,code:str,name:str,symbol:str):
         self.code = code
@@ -146,13 +146,13 @@ class Wallets(Base):
 class Reports(Base):
     __tablename__ = 'reports'
     id = Column(Integer, primary_key=True)
-    name = Column(String)   # если создан по стандартному предложению,
-                            # то назвываем также стандартно - week - mounth - year
-                            # иначе называем custom
+    name = Column(String)           # если создан по стандартному предложению,
+                                    # то назвываем также стандартно - week - mounth - year
+                                    # иначе называем custom
     report_data = Column(String)
     created_at = Column(String)
-    begin_date = Column(String) # начинаем с 00:00 - begin_date
-    end_date = Column(String) # время окончания отчета - считаем до 23:59
+    begin_date = Column(String)     # начинаем с 00:00 - begin_date
+    end_date = Column(String)       # время окончания отчета - считаем до 23:59
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("Users", back_populates='reports')
     def __init__(self,name:str,report_data:str,created_at:str, begin:str, end:str):

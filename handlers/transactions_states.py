@@ -232,7 +232,7 @@ def input_amount_state_back(call:CallbackQuery, state: StateContext):
         cur_id = data.get("cur_id")
         wall_id = data.get("wall_id")
         report_data = data.get("comment")
-        created_at = datetime.datetime.now().__str__()
+        created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").__str__()
         amount = data.get("amount")
 
         cat: Categories = db_api.categories().get_categories_by_id(cat_id)
@@ -271,7 +271,7 @@ def input_ask_comment(message: types.Message, state: StateContext):
         cur_id = data.get("cur_id")
         wall_id = data.get("wall_id")
         report_data = data.get("comment")
-        created_at = datetime.datetime.now().__str__()
+        created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").__str__()
         amount = data.get("amount")
 
         cat: Categories = db_api.categories().get_categories_by_id(cat_id)
@@ -309,7 +309,7 @@ def finish_state_callback(call: CallbackQuery, state: StateContext):
             wall_id = data.get("wall_id")
             name = data.get("type")
             report_data = data.get("comment")
-            created_at = datetime.datetime.now().__str__()
+            created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").__str__()
             amount = Decimal(str(data.get("amount")))
 
             cat: Categories = db_api.categories().get_categories_by_id(cat_id)
@@ -417,7 +417,7 @@ def change_state_callback(call: CallbackQuery, state: StateContext):
         cur_id = data.get("cur_id")
         wall_id = data.get("wall_id")
         report_data = data.get("comment")
-        created_at = datetime.datetime.now().__str__()
+        created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").__str__()
         amount = data.get("amount")
 
         cat: Categories = db_api.categories().get_categories_by_id(cat_id)
@@ -472,7 +472,7 @@ def input_ask_comment(message: types.Message, state: StateContext):
         cur_id = data.get("cur_id")
         wall_id = data.get("wall_id")
         report_data = data.get("comment")
-        created_at = datetime.datetime.now().__str__()
+        created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").__str__()
         amount = data.get("amount")
 
         cat: Categories = db_api.categories().get_categories_by_id(cat_id)
@@ -519,7 +519,7 @@ def input_ask_comment(message: types.Message, state: StateContext):
         cur_id = data.get("cur_id")
         wall_id = data.get("wall_id")
         report_data = data.get("comment")
-        created_at = datetime.datetime.now().__str__()
+        created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").__str__()
         amount = data.get("amount")
 
         cat: Categories = db_api.categories().get_categories_by_id(cat_id)

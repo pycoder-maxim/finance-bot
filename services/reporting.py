@@ -118,3 +118,12 @@ def build_text_report(user_id: int, days: int = 30) -> str:
 
     text += f"\n💼 Баланс: {balance:.2f} руб"
     return text
+
+
+from sqlalchemy import func, select, and_
+from sqlalchemy.orm import Session, joinedload
+from datetime import datetime
+from typing import Optional, List, Dict, Tuple
+
+from database.DataBaseModel import Transactions, Categories, Wallets, Currencies
+from loader import db_api
