@@ -13,7 +13,14 @@ from datetime import datetime, timedelta
 import datetime as std_datetime
 from telebot.types import CallbackQuery, Message
 import logging
+from calendar_tg.detailed import DetailedTelegramCalendar
+from datetime import datetime, timedelta, time
+
 logger = logging.getLogger(__name__)
+
+
+
+
 
 
 class Balance_and_Reports_States(StatesGroup):
@@ -21,6 +28,12 @@ class Balance_and_Reports_States(StatesGroup):
     input_reports_state = State()
     check_ballence_state = State()
     custom_period_state = State()
+    select_start_date = State()
+    select_end_date = State()
+    back_state = State()
+
+selected_start_date = None
+selected_end_date = None
 
 @bot.callback_query_handler(func=lambda call: True, state=Balance_and_Reports_States.begin_state)
 def begin_state(call:CallbackQuery, state: StateContext):
@@ -47,9 +60,6 @@ def begin_state(call:CallbackQuery, state: StateContext):
                               reply_markup=markup)
 
 
-
-        state.delete()
-
 @bot.callback_query_handler(func=lambda call: True, state=Balance_and_Reports_States.input_reports_state)
 def input_state(call:CallbackQuery, state: StateContext):
 
@@ -71,7 +81,6 @@ def input_state(call:CallbackQuery, state: StateContext):
 
     elif call.data == 'report for the mounth':
         start_date = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        start_date = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         next_month = datetime.now().replace(day=28) + timedelta(days=4)
         end_date = next_month - timedelta(days=next_month.day)
         end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=999999)
@@ -82,13 +91,17 @@ def input_state(call:CallbackQuery, state: StateContext):
         end_date = datetime.now().replace(month=12, day=31, hour=23, minute=59, second=59, microsecond=999999)
 
     elif call.data == 'custom_period':
-        state.set(Balance_and_Reports_States.custom_period_state)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                              text='Введите период в формате: ДД.ММ.ГГГГ-ДД.ММ.ГГГГ\nНапример: 01.01.2023-31.01.2023')
+        state.set(Balance_and_Reports_States.select_start_date)
+        calendar = DetailedTelegramCalendar(locale='ru')
+        markup = calendar.build()[0]
+        bot.edit_message_text("Выберите начальную дату для отчета 📅",
+                              call.message.chat.id,
+                              call.message.message_id,
+                              reply_markup=markup)
+
         return
 
     elif call.data == 'go_back':
-        state.delete()
         state.set(Balance_and_Reports_States.begin_state)
         markup = keybords.reports_and_ballance()
         wallets = db_api.wallets().get_wallets_by_user_id(user_id=call.from_user.id)
@@ -111,11 +124,70 @@ def input_state(call:CallbackQuery, state: StateContext):
         )
 
 
+@bot.callback_query_handler(func=DetailedTelegramCalendar.func(), state=Balance_and_Reports_States.select_start_date)
+def handle_start_date(call: CallbackQuery, state: StateContext):
+    global selected_start_date
+    result, key, step = DetailedTelegramCalendar(locale='ru').process(call.data)
+
+    if not result and key:
+        bot.edit_message_text("Выберите начальную дату",
+                              call.message.chat.id,
+                              call.message.message_id,
+                              reply_markup=key)
+    elif result:
+        selected_start_date = result
+        bot.edit_message_text(f"Начальная дата: {result}",
+                              call.message.chat.id,
+                              call.message.message_id)
+        state.set(Balance_and_Reports_States.select_end_date)
+        calendar = DetailedTelegramCalendar(locale='ru')
+        markup = calendar.build()[0]
+        bot.send_message(call.message.chat.id, "Теперь выберите конечную дату 📅", reply_markup=markup)
+
+@bot.callback_query_handler(func=DetailedTelegramCalendar.func(), state=Balance_and_Reports_States.select_end_date)
+def handle_end_date(call: CallbackQuery, state: StateContext):
+    global selected_start_date, selected_end_date
+    result, key, step = DetailedTelegramCalendar(locale='ru').process(call.data)
+
+    if not result and key:
+        bot.edit_message_text("Выберите конечную дату",
+                              call.message.chat.id,
+                              call.message.message_id,
+                              reply_markup=key)
+    elif result:
+        selected_end_date = result
+
+
+        start_dt = datetime.combine(selected_start_date, time.min)
+        end_dt = datetime.combine(selected_end_date, time.max)
+
+        period_days = (selected_end_date - selected_start_date).days + 1
+        period_text = f"произвольный период ({period_days} дней)"
+
+        report_text = generate_report(call.from_user.id, start_dt, end_dt, period_text)
+
+        bot.edit_message_text(report_text,
+                              call.message.chat.id,
+                              call.message.message_id,
+                              reply_markup=keybords.back_to_reports_button(),
+                              parse_mode='HTML')
+
+        state.set(Balance_and_Reports_States.back_state)
+
+
+@bot.callback_query_handler(func=lambda call: True, state=Balance_and_Reports_States.back_state)
+def handle_back_to_reports(call: CallbackQuery, state: StateContext):
+    if call.data == "go_back_to_reports":
+        state.set(Balance_and_Reports_States.input_reports_state)
+        markup = keybords.reports_time_piriod()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                              text='Выберите промежуток отчета 📅',
+                              reply_markup=markup)
+
 def generate_report(user_id: int, start_date: datetime, end_date: datetime, period_text: str) -> str:
-    """
-    Генерирует финансовый отчет для пользователя за указанный период
-    """
     try:
+        print(f"🔍 DEBUG: Generating report for user {user_id}")
+        print(f"🔍 DEBUG: Period: {start_date} to {end_date}")
 
         transactions = db_api.transactions().get_transactions_by_user_and_period(
             user_id=user_id,
@@ -123,20 +195,19 @@ def generate_report(user_id: int, start_date: datetime, end_date: datetime, peri
             end_date=end_date
         )
 
+        print(f"🔍 DEBUG: Found {len(transactions)} transactions")
+        for tr in transactions:
+            print(f"🔍 DEBUG: Transaction - amount: {tr.amount}, date: {tr.created_at}, category: {tr.category_id}")
+
 
         wallets = db_api.wallets().get_wallets_by_user_id(user_id=user_id)
-
-
         total_income = 0
         total_expense = 0
-
-
         income_by_category = {}
         expense_by_category = {}
 
         for transaction in transactions:
-
-            if transaction.amount > 0:  # Доход
+            if transaction.amount > 0:
                 total_income += transaction.amount
 
                 category = db_api.categories().get_category_by_id(transaction.category_id)
@@ -148,7 +219,6 @@ def generate_report(user_id: int, start_date: datetime, end_date: datetime, peri
 
             elif transaction.amount < 0:
                 total_expense += abs(transaction.amount)
-
                 category = db_api.categories().get_category_by_id(transaction.category_id)
                 category_name = category.name if category else "Без категории"
 
@@ -190,46 +260,11 @@ def generate_report(user_id: int, start_date: datetime, end_date: datetime, peri
 
 
 
-@bot.message_handler(state=Balance_and_Reports_States.custom_period_state)
-def handle_custom_period(message: Message, state: StateContext):
-    try:
-        user_id = message.from_user.id
-
-        if '-' not in message.text:
-            bot.send_message(message.chat.id, "❌ Неверный формат. Используйте: ДД.ММ.ГГГГ-ДД.ММ.ГГГГ")
-            return
-
-        start_str, end_str = message.text.split('-')
 
 
-        start_date = datetime.strptime(start_str.strip(), "%d.%m.%Y").replace(hour=0, minute=0, second=0)
-        end_date = datetime.strptime(end_str.strip(), "%d.%m.%Y").replace(hour=23, minute=59, second=59)
-
-        if start_date > end_date:
-            bot.send_message(message.chat.id, "❌ Начальная дата не может быть позже конечной")
-            return
 
 
-        period_days = (end_date - start_date).days + 1
-        period_text = f"произвольный период ({period_days} дней)"
 
-        report_text = generate_report(user_id, start_date, end_date, period_text)
-
-        bot.send_message(
-            chat_id=message.chat.id,
-            text=report_text,
-            reply_markup=keybords.back_to_reports_button(),
-            parse_mode='HTML'
-        )
-
-
-        state.set(Balance_and_Reports_States.input_reports_state)
-
-    except ValueError:
-        bot.send_message(message.chat.id, "❌ Неверный формат даты. Используйте: ДД.ММ.ГГГГ")
-    except Exception as e:
-        logger.error(f"Error in custom period: {e}")
-        bot.send_message(message.chat.id, "❌ Ошибка при обработке периода")
 
 
 
