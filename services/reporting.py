@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 from collections import defaultdict
+
+
 from loader import db_api
 
 def get_recent_transactions(user_id: int, limit: int = 10):
@@ -127,3 +129,128 @@ from typing import Optional, List, Dict, Tuple
 
 from database.DataBaseModel import Transactions, Categories, Wallets, Currencies
 from loader import db_api
+
+TTYPE_INCOME = 'income'
+TTYPE_EXPENCE = 'expense'
+
+def _norm_date(dt: str | datetime) -> str:
+    if isinstance(dt, datetime):
+        return dt.strftime("%y-%m-%d %H:%M:%S")
+    return dt
+
+
+def category_totals(
+        user_id:int,
+        date_frome: str | datetime,
+        date_to : str | datetime,
+        ttype: Optional[str] = None,
+        wallet_ids: Optional[List[int]] = None,
+        currency_id: Optional[int] = None,
+        top_n: Optional[int] = None
+) -> List[Dict]:
+    df = _norm_date(date_frome)
+    dt = _norm_date(date_to)
+
+    # Условия запроса для ОРМ
+    conditiones = [
+        Transactions.user_id == user_id,
+        Transactions.created_at >= df,
+        Transactions.created_at <= dt,
+        Transactions.category_id.isnot(None)
+    ]
+    if ttype:
+        conditiones.append(Transactions.name == ttype)
+    if wallet_ids:
+        conditiones.append(Transactions.wallet_id.in_(wallet_ids))
+    if currency_id:
+        conditiones.append(Transactions.currency_id == currency_id)
+
+    stmt = (
+        select(
+            Categories.id.label("category_id"),
+            Categories.name.label("category"),
+            func.coalesce(func.sum(Transactions.amount), 0).label("total")
+        )
+        .join(Categories, Categories.id == Transactions.category_id)
+        .where(and_(*conditiones))
+        .group_by(Categories.id, Categories.name)
+        .order_by(func.sum(Transactions.amount).desc())
+    )
+
+    if top_n:
+        stmt = stmt.limit(top_n)
+
+    rows = db_api.__session__.execute(stmt).all()
+    return [{"category_id": r.category_id, "category": r.category, "total": float(r.total)} for r in rows]
+
+
+def category_breakdown(
+        user_id : int,
+        category_id : int,
+        date_from : str | datetime,
+        date_to : str | datetime,
+        ttype : Optional[str] = None,
+        wallet_ids : Optional[List[int]] = None,
+        currency_id : Optional[int] = None,
+        limit: int = 20,
+        offset: int = 0
+) -> List[Dict]:
+    """Детализация по конкретной категории: список транзакций (для раскрытия «вглубь»)."""
+
+    df = _norm_date(date_from)
+    dt = _norm_date(date_to)
+
+    conditions = [
+        Transactions.user_id == user_id,
+        Transactions.created_at >= df,
+        Transactions.created_at <= dt,
+        Transactions.category_id == category_id
+    ]
+    if ttype:
+        conditions.append(Transactions.name == ttype)
+    if wallet_ids:
+        conditions.append(Transactions.wallet_id.in_(wallet_ids))
+    if currency_id:
+        conditions.append(Transactions.currency_id == currency_id)
+
+    stmt = (
+        select(
+            Transactions.id,
+            Transactions.created_at,
+            Transactions.amount,
+            Transactions.report_data,
+            Wallets.name.label("wallet"),
+            Currencies.code.label("currency")
+        )
+        .join(Wallets, Wallets.id == Transactions.wallet_id, isouter=True)
+        .join(Currencies, Currencies.id == Transactions.currency_id, isouter=True)
+        .where(and_(*conditions))
+        .order_by(Transactions.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+
+    rows = db_api.__session__.execute(stmt).all()
+    result = []
+    for r in rows:
+        result.append({
+            "id": r.id,
+            "created_at": r.created_at,
+            "amount": float(r.amount),
+            "currency": r.currency,
+            "wallet": r.wallet,
+            "comment": r.report_data
+        })
+    return result
+
+
+
+
+
+
+
+
+
+
+
+
