@@ -89,6 +89,7 @@ def input_state(call:CallbackQuery, state: StateContext):
     elif call.data == 'report for the year':
         start_date = datetime.now().replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
         end_date = datetime.now().replace(month=12, day=31, hour=23, minute=59, second=59, microsecond=999999)
+        period_text = "год"
 
     elif call.data == 'custom_period':
         state.set(Balance_and_Reports_States.select_start_date)

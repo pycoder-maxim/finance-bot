@@ -4,7 +4,6 @@ from DataBaseModel import db_path
 
 from UserHandler import UserHandler
 from CategoryHandler import CategoryHandler
-from ReportsHandler import ReportsHandler
 from TransactionsHandler import TransactionsHandler
 from WalletHandler import WalletHandler
 from CurrenciesHandler import CurrenciesHandler, list_of_default_currencies
@@ -27,7 +26,6 @@ class DatabaseApi(metaclass=Singleton):
 
         self.__user_hanlder__ = UserHandler(self.__session__)
         self.__category_handler = CategoryHandler(self.__session__)
-        self.__report_handler = ReportsHandler(self.__session__)
         self.__trans_handler = TransactionsHandler(self.__session__)
         self.__wallet_handler = WalletHandler(self.__session__)
 
