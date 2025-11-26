@@ -1,4 +1,4 @@
-from DataBaseModel import Currencies
+from .DataBaseModel import Currencies
 from sqlalchemy.orm import Session
 
 list_of_default_currencies = [("RUB", "Российский рубль", "₽"), ("USD", "Американский доллар", "$"), ("EUR", "Евро", "€")]

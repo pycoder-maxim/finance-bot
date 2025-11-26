@@ -3,7 +3,7 @@ from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
 import datetime
 from handlers.transactions_states import MyStates
-from database.build.lib.DataBaseModel import Currencies, Categories, Wallets
+from database.DataBaseModel import Currencies, Categories, Wallets
 from loader import bot, db_api
 import keybords
 from telebot.types import CallbackQuery

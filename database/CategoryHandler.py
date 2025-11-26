@@ -1,4 +1,4 @@
-from DataBaseModel import Categories
+from .DataBaseModel import Categories
 from sqlalchemy.orm import Session
 
 categories_of_expenses = ["продуткы","кафе и рестораны","аренда жилья","комунальные услуги ","транспорт ","одежда и обувь ","медицина","подарки","развлечения","спорт","связь и интернет ","покупки","путеществия","образоание","домашние животные ","долги и кредиты"]

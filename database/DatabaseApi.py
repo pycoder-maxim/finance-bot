@@ -1,12 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from DataBaseModel import db_path
+from .DataBaseModel import db_path
 
-from UserHandler import UserHandler
-from CategoryHandler import CategoryHandler
-from TransactionsHandler import TransactionsHandler
-from WalletHandler import WalletHandler
-from CurrenciesHandler import CurrenciesHandler, list_of_default_currencies
+from .UserHandler import UserHandler
+from .CategoryHandler import CategoryHandler
+from .TransactionsHandler import TransactionsHandler
+from .WalletHandler import WalletHandler
+from .CurrenciesHandler import CurrenciesHandler, list_of_default_currencies
 
 class Singleton(type):
     _instances = {}

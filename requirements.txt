@@ -1,5 +1,6 @@
 sqlalchemy==2.0.23
-pyTelegramBotAPI==4.19.1
 python-dateutil==2.8.2
 python-dotenv==1.0.0
-EOF
+requests==2.31.0
+pytz==2023.3
+pytelegrambotapi[states]

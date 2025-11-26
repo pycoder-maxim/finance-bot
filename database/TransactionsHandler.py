@@ -1,4 +1,4 @@
-from DataBaseModel import Transactions
+from .DataBaseModel import Transactions
 from sqlalchemy.orm import Session
 import decimal
 

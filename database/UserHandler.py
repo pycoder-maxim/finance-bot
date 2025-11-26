@@ -1,4 +1,4 @@
-from DataBaseModel import Users, Wallets, Currencies,Categories
+from .DataBaseModel import Users, Wallets, Currencies, Categories
 from sqlalchemy.orm import Session
 from database import CategoryHandler
 

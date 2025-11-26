@@ -1,8 +1,15 @@
-from DataBaseModel import Wallets, Users
+from .DataBaseModel import Wallets, Users
 from sqlalchemy.orm import Session
 import datetime
 from sqlalchemy import func
-from DataBaseModel import Currencies
+from .DataBaseModel import Currencies
+from .DataBaseModel import Wallets, Users, Currencies
+from sqlalchemy.orm import Session
+import datetime
+from sqlalchemy import func
+
+
+
 class WalletHandler:
     def __init__(self, session:Session):
         self.__session__ = session

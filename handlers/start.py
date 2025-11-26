@@ -3,13 +3,13 @@ from datetime import datetime
 from loader import bot, db_api
 from telebot.states.sync.context import StateContext
 import keybords
-from transactions_states import MyStates
-from categories_manipulation_states import CatStates
+from .transactions_states import MyStates
+from .categories_manipulation_states import CatStates
 from calendar_tg import DetailedTelegramCalendar, LSTEP
 from datetime import date
 from telebot.types import CallbackQuery
-from wallets_manipulation import WallStates
-from balance_and_report import Balance_and_Reports_States
+from .wallets_manipulation import WallStates
+from .balance_and_report import Balance_and_Reports_States
 
 
 @bot.message_handler(commands=['start'])
