@@ -12,6 +12,7 @@ from .wallets_manipulation import WallStates
 from .balance_and_report import Balance_and_Reports_States
 
 
+
 @bot.message_handler(commands=['start'])
 def main(messege: Message, state: StateContext):
     state.delete()
@@ -22,6 +23,32 @@ def main(messege: Message, state: StateContext):
                             reply_markup=markup)
     db_api.users().add_user(messege.from_user.id, messege.from_user.first_name, messege.from_user.last_name,
                             messege.from_user.username, datetime.now().__str__())
+
+
+@bot.message_handler(commands=['balance'])
+def show_balance(message: Message, state: StateContext):
+    state.delete()
+    state.set(Balance_and_Reports_States.begin_state)
+    markup = keybords.reports_and_ballance()
+    wallets = db_api.wallets().get_wallets_by_user_id(user_id=message.from_user.id)  # Исправлено: message вместо call
+    wallet_info = ''
+    for wallet in wallets:
+        wallet_info += f'{wallet.name}:  {wallet.value} руб.\n'
+
+    bold_title = '<b>➕💼 Сумма ваших кошельков:</b>'
+    bot.send_message(chat_id=message.chat.id,
+                     text=f'{bold_title} : \n\n {wallet_info} ',
+                     reply_markup=markup, parse_mode='HTML')
+
+
+@bot.message_handler(commands=['categories'])
+def show_categories(message: Message, state: StateContext):
+    state.set(CatStates.category_state)
+    markup = keybords.delete_change_the_name_create()
+    bot.send_message(chat_id=message.chat.id,
+                     text='Выберете действие',
+                     reply_markup=markup)
+
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -39,6 +66,7 @@ def change_comand(call:CallbackQuery,state: StateContext):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                               text='Выберете действие',
                               reply_markup=markup)
+
     elif call.data == 'changing_walets':
         state.set(WallStates.wallets_state)
         markup = keybords.delete_change_the_wallet_create()
